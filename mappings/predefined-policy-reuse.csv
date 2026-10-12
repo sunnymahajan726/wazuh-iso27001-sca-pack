@@ -1,0 +1,10 @@
+target,installed_policy_reference
+Windows 10,cis_win10_enterprise
+Windows 11,cis_win11_enterprise
+Windows Server 2016,cis_win2016
+Windows Server 2019,cis_win2019
+Windows audit,sca_win_audit
+Ubuntu,cis_ubuntu*
+Debian,cis_debian*
+RHEL,cis_rhel*
+Generic Linux,sca_distro_independent_linux

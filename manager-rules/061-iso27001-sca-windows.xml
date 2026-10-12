@@ -1,0 +1,560 @@
+<group name="iso27001_2022,sca,iso27001_sca_evidence,">
+  <rule id="122066" level="7">
+    <if_sid>19007</if_sid>
+    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Windows\ Endpoint\ Evidence$</field>
+    <field name="sca.check.id">^2702001$</field>
+    <description>ISO/IEC 27001:2022 A.5.9: $(sca.check.title) - failed</description>
+    <group>iso27001_A_5_9,iso27001_sca,evidence_fail,technical_evidence,</group>
+    <options>no_full_log</options>
+  </rule>
+
+  <rule id="122067" level="3">
+    <if_sid>19008</if_sid>
+    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Windows\ Endpoint\ Evidence$</field>
+    <field name="sca.check.id">^2702001$</field>
+    <description>ISO/IEC 27001:2022 A.5.9: $(sca.check.title) - passed</description>
+    <group>iso27001_A_5_9,iso27001_sca,evidence_pass,technical_evidence,</group>
+    <options>no_full_log</options>
+  </rule>
+
+  <rule id="122068" level="7">
+    <if_sid>19007</if_sid>
+    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Windows\ Endpoint\ Evidence$</field>
+    <field name="sca.check.id">^2702002$</field>
+    <description>ISO/IEC 27001:2022 A.5.16: $(sca.check.title) - failed</description>
+    <group>iso27001_A_5_16,iso27001_sca,evidence_fail,technical_evidence,</group>
+    <options>no_full_log</options>
+  </rule>
+
+  <rule id="122069" level="3">
+    <if_sid>19008</if_sid>
+    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Windows\ Endpoint\ Evidence$</field>
+    <field name="sca.check.id">^2702002$</field>
+    <description>ISO/IEC 27001:2022 A.5.16: $(sca.check.title) - passed</description>
+    <group>iso27001_A_5_16,iso27001_sca,evidence_pass,technical_evidence,</group>
+    <options>no_full_log</options>
+  </rule>
+
+  <rule id="122070" level="7">
+    <if_sid>19007</if_sid>
+    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Windows\ Endpoint\ Evidence$</field>
+    <field name="sca.check.id">^2702003$</field>
+    <description>ISO/IEC 27001:2022 A.8.2: $(sca.check.title) - failed</description>
+    <group>iso27001_A_8_2,iso27001_sca,evidence_fail,technical_evidence,</group>
+    <options>no_full_log</options>
+  </rule>
+
+  <rule id="122071" level="3">
+    <if_sid>19008</if_sid>
+    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Windows\ Endpoint\ Evidence$</field>
+    <field name="sca.check.id">^2702003$</field>
+    <description>ISO/IEC 27001:2022 A.8.2: $(sca.check.title) - passed</description>
+    <group>iso27001_A_8_2,iso27001_sca,evidence_pass,technical_evidence,</group>
+    <options>no_full_log</options>
+  </rule>
+
+  <rule id="122072" level="7">
+    <if_sid>19007</if_sid>
+    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Windows\ Endpoint\ Evidence$</field>
+    <field name="sca.check.id">^2702004$</field>
+    <description>ISO/IEC 27001:2022 A.5.17: $(sca.check.title) - failed</description>
+    <group>iso27001_A_5_17,iso27001_sca,evidence_fail,technical_evidence,</group>
+    <options>no_full_log</options>
+  </rule>
+
+  <rule id="122073" level="3">
+    <if_sid>19008</if_sid>
+    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Windows\ Endpoint\ Evidence$</field>
+    <field name="sca.check.id">^2702004$</field>
+    <description>ISO/IEC 27001:2022 A.5.17: $(sca.check.title) - passed</description>
+    <group>iso27001_A_5_17,iso27001_sca,evidence_pass,technical_evidence,</group>
+    <options>no_full_log</options>
+  </rule>
+
+  <rule id="122074" level="7">
+    <if_sid>19007</if_sid>
+    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Windows\ Endpoint\ Evidence$</field>
+    <field name="sca.check.id">^2702005$</field>
+    <description>ISO/IEC 27001:2022 A.8.5: $(sca.check.title) - failed</description>
+    <group>iso27001_A_8_5,iso27001_sca,evidence_fail,technical_evidence,</group>
+    <options>no_full_log</options>
+  </rule>
+
+  <rule id="122075" level="3">
+    <if_sid>19008</if_sid>
+    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Windows\ Endpoint\ Evidence$</field>
+    <field name="sca.check.id">^2702005$</field>
+    <description>ISO/IEC 27001:2022 A.8.5: $(sca.check.title) - passed</description>
+    <group>iso27001_A_8_5,iso27001_sca,evidence_pass,technical_evidence,</group>
+    <options>no_full_log</options>
+  </rule>
+
+  <rule id="122076" level="7">
+    <if_sid>19007</if_sid>
+    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Windows\ Endpoint\ Evidence$</field>
+    <field name="sca.check.id">^2702006$</field>
+    <description>ISO/IEC 27001:2022 A.8.5: $(sca.check.title) - failed</description>
+    <group>iso27001_A_8_5,iso27001_sca,evidence_fail,technical_evidence,</group>
+    <options>no_full_log</options>
+  </rule>
+
+  <rule id="122077" level="3">
+    <if_sid>19008</if_sid>
+    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Windows\ Endpoint\ Evidence$</field>
+    <field name="sca.check.id">^2702006$</field>
+    <description>ISO/IEC 27001:2022 A.8.5: $(sca.check.title) - passed</description>
+    <group>iso27001_A_8_5,iso27001_sca,evidence_pass,technical_evidence,</group>
+    <options>no_full_log</options>
+  </rule>
+
+  <rule id="122078" level="7">
+    <if_sid>19007</if_sid>
+    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Windows\ Endpoint\ Evidence$</field>
+    <field name="sca.check.id">^2702007$</field>
+    <description>ISO/IEC 27001:2022 A.8.5: $(sca.check.title) - failed</description>
+    <group>iso27001_A_8_5,iso27001_sca,evidence_fail,technical_evidence,</group>
+    <options>no_full_log</options>
+  </rule>
+
+  <rule id="122079" level="3">
+    <if_sid>19008</if_sid>
+    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Windows\ Endpoint\ Evidence$</field>
+    <field name="sca.check.id">^2702007$</field>
+    <description>ISO/IEC 27001:2022 A.8.5: $(sca.check.title) - passed</description>
+    <group>iso27001_A_8_5,iso27001_sca,evidence_pass,technical_evidence,</group>
+    <options>no_full_log</options>
+  </rule>
+
+  <rule id="122080" level="7">
+    <if_sid>19007</if_sid>
+    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Windows\ Endpoint\ Evidence$</field>
+    <field name="sca.check.id">^2702008$</field>
+    <description>ISO/IEC 27001:2022 A.5.17: $(sca.check.title) - failed</description>
+    <group>iso27001_A_5_17,iso27001_sca,evidence_fail,technical_evidence,</group>
+    <options>no_full_log</options>
+  </rule>
+
+  <rule id="122081" level="3">
+    <if_sid>19008</if_sid>
+    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Windows\ Endpoint\ Evidence$</field>
+    <field name="sca.check.id">^2702008$</field>
+    <description>ISO/IEC 27001:2022 A.5.17: $(sca.check.title) - passed</description>
+    <group>iso27001_A_5_17,iso27001_sca,evidence_pass,technical_evidence,</group>
+    <options>no_full_log</options>
+  </rule>
+
+  <rule id="122082" level="7">
+    <if_sid>19007</if_sid>
+    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Windows\ Endpoint\ Evidence$</field>
+    <field name="sca.check.id">^2702009$</field>
+    <description>ISO/IEC 27001:2022 A.5.17: $(sca.check.title) - failed</description>
+    <group>iso27001_A_5_17,iso27001_sca,evidence_fail,technical_evidence,</group>
+    <options>no_full_log</options>
+  </rule>
+
+  <rule id="122083" level="3">
+    <if_sid>19008</if_sid>
+    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Windows\ Endpoint\ Evidence$</field>
+    <field name="sca.check.id">^2702009$</field>
+    <description>ISO/IEC 27001:2022 A.5.17: $(sca.check.title) - passed</description>
+    <group>iso27001_A_5_17,iso27001_sca,evidence_pass,technical_evidence,</group>
+    <options>no_full_log</options>
+  </rule>
+
+  <rule id="122084" level="7">
+    <if_sid>19007</if_sid>
+    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Windows\ Endpoint\ Evidence$</field>
+    <field name="sca.check.id">^2702010$</field>
+    <description>ISO/IEC 27001:2022 A.8.7: $(sca.check.title) - failed</description>
+    <group>iso27001_A_8_7,iso27001_sca,evidence_fail,technical_evidence,</group>
+    <options>no_full_log</options>
+  </rule>
+
+  <rule id="122085" level="3">
+    <if_sid>19008</if_sid>
+    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Windows\ Endpoint\ Evidence$</field>
+    <field name="sca.check.id">^2702010$</field>
+    <description>ISO/IEC 27001:2022 A.8.7: $(sca.check.title) - passed</description>
+    <group>iso27001_A_8_7,iso27001_sca,evidence_pass,technical_evidence,</group>
+    <options>no_full_log</options>
+  </rule>
+
+  <rule id="122086" level="7">
+    <if_sid>19007</if_sid>
+    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Windows\ Endpoint\ Evidence$</field>
+    <field name="sca.check.id">^2702011$</field>
+    <description>ISO/IEC 27001:2022 A.8.8: $(sca.check.title) - failed</description>
+    <group>iso27001_A_8_8,iso27001_sca,evidence_fail,technical_evidence,</group>
+    <options>no_full_log</options>
+  </rule>
+
+  <rule id="122087" level="3">
+    <if_sid>19008</if_sid>
+    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Windows\ Endpoint\ Evidence$</field>
+    <field name="sca.check.id">^2702011$</field>
+    <description>ISO/IEC 27001:2022 A.8.8: $(sca.check.title) - passed</description>
+    <group>iso27001_A_8_8,iso27001_sca,evidence_pass,technical_evidence,</group>
+    <options>no_full_log</options>
+  </rule>
+
+  <rule id="122088" level="7">
+    <if_sid>19007</if_sid>
+    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Windows\ Endpoint\ Evidence$</field>
+    <field name="sca.check.id">^2702012$</field>
+    <description>ISO/IEC 27001:2022 A.8.20: $(sca.check.title) - failed</description>
+    <group>iso27001_A_8_20,iso27001_sca,evidence_fail,technical_evidence,</group>
+    <options>no_full_log</options>
+  </rule>
+
+  <rule id="122089" level="3">
+    <if_sid>19008</if_sid>
+    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Windows\ Endpoint\ Evidence$</field>
+    <field name="sca.check.id">^2702012$</field>
+    <description>ISO/IEC 27001:2022 A.8.20: $(sca.check.title) - passed</description>
+    <group>iso27001_A_8_20,iso27001_sca,evidence_pass,technical_evidence,</group>
+    <options>no_full_log</options>
+  </rule>
+
+  <rule id="122090" level="7">
+    <if_sid>19007</if_sid>
+    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Windows\ Endpoint\ Evidence$</field>
+    <field name="sca.check.id">^2702013$</field>
+    <description>ISO/IEC 27001:2022 A.8.20: $(sca.check.title) - failed</description>
+    <group>iso27001_A_8_20,iso27001_sca,evidence_fail,technical_evidence,</group>
+    <options>no_full_log</options>
+  </rule>
+
+  <rule id="122091" level="3">
+    <if_sid>19008</if_sid>
+    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Windows\ Endpoint\ Evidence$</field>
+    <field name="sca.check.id">^2702013$</field>
+    <description>ISO/IEC 27001:2022 A.8.20: $(sca.check.title) - passed</description>
+    <group>iso27001_A_8_20,iso27001_sca,evidence_pass,technical_evidence,</group>
+    <options>no_full_log</options>
+  </rule>
+
+  <rule id="122092" level="7">
+    <if_sid>19007</if_sid>
+    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Windows\ Endpoint\ Evidence$</field>
+    <field name="sca.check.id">^2702014$</field>
+    <description>ISO/IEC 27001:2022 A.8.21: $(sca.check.title) - failed</description>
+    <group>iso27001_A_8_21,iso27001_sca,evidence_fail,technical_evidence,</group>
+    <options>no_full_log</options>
+  </rule>
+
+  <rule id="122093" level="3">
+    <if_sid>19008</if_sid>
+    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Windows\ Endpoint\ Evidence$</field>
+    <field name="sca.check.id">^2702014$</field>
+    <description>ISO/IEC 27001:2022 A.8.21: $(sca.check.title) - passed</description>
+    <group>iso27001_A_8_21,iso27001_sca,evidence_pass,technical_evidence,</group>
+    <options>no_full_log</options>
+  </rule>
+
+  <rule id="122094" level="7">
+    <if_sid>19007</if_sid>
+    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Windows\ Endpoint\ Evidence$</field>
+    <field name="sca.check.id">^2702015$</field>
+    <description>ISO/IEC 27001:2022 A.8.24: $(sca.check.title) - failed</description>
+    <group>iso27001_A_8_24,iso27001_sca,evidence_fail,technical_evidence,</group>
+    <options>no_full_log</options>
+  </rule>
+
+  <rule id="122095" level="3">
+    <if_sid>19008</if_sid>
+    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Windows\ Endpoint\ Evidence$</field>
+    <field name="sca.check.id">^2702015$</field>
+    <description>ISO/IEC 27001:2022 A.8.24: $(sca.check.title) - passed</description>
+    <group>iso27001_A_8_24,iso27001_sca,evidence_pass,technical_evidence,</group>
+    <options>no_full_log</options>
+  </rule>
+
+  <rule id="122096" level="7">
+    <if_sid>19007</if_sid>
+    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Windows\ Endpoint\ Evidence$</field>
+    <field name="sca.check.id">^2702016$</field>
+    <description>ISO/IEC 27001:2022 A.8.24: $(sca.check.title) - failed</description>
+    <group>iso27001_A_8_24,iso27001_sca,evidence_fail,technical_evidence,</group>
+    <options>no_full_log</options>
+  </rule>
+
+  <rule id="122097" level="3">
+    <if_sid>19008</if_sid>
+    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Windows\ Endpoint\ Evidence$</field>
+    <field name="sca.check.id">^2702016$</field>
+    <description>ISO/IEC 27001:2022 A.8.24: $(sca.check.title) - passed</description>
+    <group>iso27001_A_8_24,iso27001_sca,evidence_pass,technical_evidence,</group>
+    <options>no_full_log</options>
+  </rule>
+
+  <rule id="122098" level="7">
+    <if_sid>19007</if_sid>
+    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Windows\ Endpoint\ Evidence$</field>
+    <field name="sca.check.id">^2702017$</field>
+    <description>ISO/IEC 27001:2022 A.8.15: $(sca.check.title) - failed</description>
+    <group>iso27001_A_8_15,iso27001_sca,evidence_fail,technical_evidence,</group>
+    <options>no_full_log</options>
+  </rule>
+
+  <rule id="122099" level="3">
+    <if_sid>19008</if_sid>
+    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Windows\ Endpoint\ Evidence$</field>
+    <field name="sca.check.id">^2702017$</field>
+    <description>ISO/IEC 27001:2022 A.8.15: $(sca.check.title) - passed</description>
+    <group>iso27001_A_8_15,iso27001_sca,evidence_pass,technical_evidence,</group>
+    <options>no_full_log</options>
+  </rule>
+
+  <rule id="122100" level="7">
+    <if_sid>19007</if_sid>
+    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Windows\ Endpoint\ Evidence$</field>
+    <field name="sca.check.id">^2702018$</field>
+    <description>ISO/IEC 27001:2022 A.8.15: $(sca.check.title) - failed</description>
+    <group>iso27001_A_8_15,iso27001_sca,evidence_fail,technical_evidence,</group>
+    <options>no_full_log</options>
+  </rule>
+
+  <rule id="122101" level="3">
+    <if_sid>19008</if_sid>
+    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Windows\ Endpoint\ Evidence$</field>
+    <field name="sca.check.id">^2702018$</field>
+    <description>ISO/IEC 27001:2022 A.8.15: $(sca.check.title) - passed</description>
+    <group>iso27001_A_8_15,iso27001_sca,evidence_pass,technical_evidence,</group>
+    <options>no_full_log</options>
+  </rule>
+
+  <rule id="122102" level="7">
+    <if_sid>19007</if_sid>
+    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Windows\ Endpoint\ Evidence$</field>
+    <field name="sca.check.id">^2702019$</field>
+    <description>ISO/IEC 27001:2022 A.8.16: $(sca.check.title) - failed</description>
+    <group>iso27001_A_8_16,iso27001_sca,evidence_fail,technical_evidence,</group>
+    <options>no_full_log</options>
+  </rule>
+
+  <rule id="122103" level="3">
+    <if_sid>19008</if_sid>
+    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Windows\ Endpoint\ Evidence$</field>
+    <field name="sca.check.id">^2702019$</field>
+    <description>ISO/IEC 27001:2022 A.8.16: $(sca.check.title) - passed</description>
+    <group>iso27001_A_8_16,iso27001_sca,evidence_pass,technical_evidence,</group>
+    <options>no_full_log</options>
+  </rule>
+
+  <rule id="122104" level="7">
+    <if_sid>19007</if_sid>
+    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Windows\ Endpoint\ Evidence$</field>
+    <field name="sca.check.id">^2702020$</field>
+    <description>ISO/IEC 27001:2022 A.8.17: $(sca.check.title) - failed</description>
+    <group>iso27001_A_8_17,iso27001_sca,evidence_fail,technical_evidence,</group>
+    <options>no_full_log</options>
+  </rule>
+
+  <rule id="122105" level="3">
+    <if_sid>19008</if_sid>
+    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Windows\ Endpoint\ Evidence$</field>
+    <field name="sca.check.id">^2702020$</field>
+    <description>ISO/IEC 27001:2022 A.8.17: $(sca.check.title) - passed</description>
+    <group>iso27001_A_8_17,iso27001_sca,evidence_pass,technical_evidence,</group>
+    <options>no_full_log</options>
+  </rule>
+
+  <rule id="122106" level="7">
+    <if_sid>19007</if_sid>
+    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Windows\ Endpoint\ Evidence$</field>
+    <field name="sca.check.id">^2702021$</field>
+    <description>ISO/IEC 27001:2022 A.8.5: $(sca.check.title) - failed</description>
+    <group>iso27001_A_8_5,iso27001_sca,evidence_fail,technical_evidence,</group>
+    <options>no_full_log</options>
+  </rule>
+
+  <rule id="122107" level="3">
+    <if_sid>19008</if_sid>
+    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Windows\ Endpoint\ Evidence$</field>
+    <field name="sca.check.id">^2702021$</field>
+    <description>ISO/IEC 27001:2022 A.8.5: $(sca.check.title) - passed</description>
+    <group>iso27001_A_8_5,iso27001_sca,evidence_pass,technical_evidence,</group>
+    <options>no_full_log</options>
+  </rule>
+
+  <rule id="122108" level="7">
+    <if_sid>19007</if_sid>
+    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Windows\ Endpoint\ Evidence$</field>
+    <field name="sca.check.id">^2702022$</field>
+    <description>ISO/IEC 27001:2022 A.8.3: $(sca.check.title) - failed</description>
+    <group>iso27001_A_8_3,iso27001_sca,evidence_fail,technical_evidence,</group>
+    <options>no_full_log</options>
+  </rule>
+
+  <rule id="122109" level="3">
+    <if_sid>19008</if_sid>
+    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Windows\ Endpoint\ Evidence$</field>
+    <field name="sca.check.id">^2702022$</field>
+    <description>ISO/IEC 27001:2022 A.8.3: $(sca.check.title) - passed</description>
+    <group>iso27001_A_8_3,iso27001_sca,evidence_pass,technical_evidence,</group>
+    <options>no_full_log</options>
+  </rule>
+
+  <rule id="122110" level="7">
+    <if_sid>19007</if_sid>
+    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Windows\ Endpoint\ Evidence$</field>
+    <field name="sca.check.id">^2702023$</field>
+    <description>ISO/IEC 27001:2022 A.7.10: $(sca.check.title) - failed</description>
+    <group>iso27001_A_7_10,iso27001_sca,evidence_fail,technical_evidence,</group>
+    <options>no_full_log</options>
+  </rule>
+
+  <rule id="122111" level="3">
+    <if_sid>19008</if_sid>
+    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Windows\ Endpoint\ Evidence$</field>
+    <field name="sca.check.id">^2702023$</field>
+    <description>ISO/IEC 27001:2022 A.7.10: $(sca.check.title) - passed</description>
+    <group>iso27001_A_7_10,iso27001_sca,evidence_pass,technical_evidence,</group>
+    <options>no_full_log</options>
+  </rule>
+
+  <rule id="122112" level="7">
+    <if_sid>19007</if_sid>
+    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Windows\ Endpoint\ Evidence$</field>
+    <field name="sca.check.id">^2702024$</field>
+    <description>ISO/IEC 27001:2022 A.8.13: $(sca.check.title) - failed</description>
+    <group>iso27001_A_8_13,iso27001_sca,evidence_fail,technical_evidence,</group>
+    <options>no_full_log</options>
+  </rule>
+
+  <rule id="122113" level="3">
+    <if_sid>19008</if_sid>
+    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Windows\ Endpoint\ Evidence$</field>
+    <field name="sca.check.id">^2702024$</field>
+    <description>ISO/IEC 27001:2022 A.8.13: $(sca.check.title) - passed</description>
+    <group>iso27001_A_8_13,iso27001_sca,evidence_pass,technical_evidence,</group>
+    <options>no_full_log</options>
+  </rule>
+
+  <rule id="122114" level="7">
+    <if_sid>19007</if_sid>
+    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Windows\ Endpoint\ Evidence$</field>
+    <field name="sca.check.id">^2702025$</field>
+    <description>ISO/IEC 27001:2022 A.8.6: $(sca.check.title) - failed</description>
+    <group>iso27001_A_8_6,iso27001_sca,evidence_fail,technical_evidence,</group>
+    <options>no_full_log</options>
+  </rule>
+
+  <rule id="122115" level="3">
+    <if_sid>19008</if_sid>
+    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Windows\ Endpoint\ Evidence$</field>
+    <field name="sca.check.id">^2702025$</field>
+    <description>ISO/IEC 27001:2022 A.8.6: $(sca.check.title) - passed</description>
+    <group>iso27001_A_8_6,iso27001_sca,evidence_pass,technical_evidence,</group>
+    <options>no_full_log</options>
+  </rule>
+
+  <rule id="122116" level="7">
+    <if_sid>19007</if_sid>
+    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Windows\ Endpoint\ Evidence$</field>
+    <field name="sca.check.id">^2702026$</field>
+    <description>ISO/IEC 27001:2022 A.8.18: $(sca.check.title) - failed</description>
+    <group>iso27001_A_8_18,iso27001_sca,evidence_fail,technical_evidence,</group>
+    <options>no_full_log</options>
+  </rule>
+
+  <rule id="122117" level="3">
+    <if_sid>19008</if_sid>
+    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Windows\ Endpoint\ Evidence$</field>
+    <field name="sca.check.id">^2702026$</field>
+    <description>ISO/IEC 27001:2022 A.8.18: $(sca.check.title) - passed</description>
+    <group>iso27001_A_8_18,iso27001_sca,evidence_pass,technical_evidence,</group>
+    <options>no_full_log</options>
+  </rule>
+
+  <rule id="122118" level="7">
+    <if_sid>19007</if_sid>
+    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Windows\ Endpoint\ Evidence$</field>
+    <field name="sca.check.id">^2702027$</field>
+    <description>ISO/IEC 27001:2022 A.8.31: $(sca.check.title) - failed</description>
+    <group>iso27001_A_8_31,iso27001_sca,evidence_fail,technical_evidence,</group>
+    <options>no_full_log</options>
+  </rule>
+
+  <rule id="122119" level="3">
+    <if_sid>19008</if_sid>
+    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Windows\ Endpoint\ Evidence$</field>
+    <field name="sca.check.id">^2702027$</field>
+    <description>ISO/IEC 27001:2022 A.8.31: $(sca.check.title) - passed</description>
+    <group>iso27001_A_8_31,iso27001_sca,evidence_pass,technical_evidence,</group>
+    <options>no_full_log</options>
+  </rule>
+
+  <rule id="122120" level="7">
+    <if_sid>19007</if_sid>
+    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Windows\ Endpoint\ Evidence$</field>
+    <field name="sca.check.id">^2702028$</field>
+    <description>ISO/IEC 27001:2022 A.8.19: $(sca.check.title) - failed</description>
+    <group>iso27001_A_8_19,iso27001_sca,evidence_fail,technical_evidence,</group>
+    <options>no_full_log</options>
+  </rule>
+
+  <rule id="122121" level="3">
+    <if_sid>19008</if_sid>
+    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Windows\ Endpoint\ Evidence$</field>
+    <field name="sca.check.id">^2702028$</field>
+    <description>ISO/IEC 27001:2022 A.8.19: $(sca.check.title) - passed</description>
+    <group>iso27001_A_8_19,iso27001_sca,evidence_pass,technical_evidence,</group>
+    <options>no_full_log</options>
+  </rule>
+
+  <rule id="122122" level="7">
+    <if_sid>19007</if_sid>
+    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Windows\ Endpoint\ Evidence$</field>
+    <field name="sca.check.id">^2702029$</field>
+    <description>ISO/IEC 27001:2022 A.8.32: $(sca.check.title) - failed</description>
+    <group>iso27001_A_8_32,iso27001_sca,evidence_fail,technical_evidence,</group>
+    <options>no_full_log</options>
+  </rule>
+
+  <rule id="122123" level="3">
+    <if_sid>19008</if_sid>
+    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Windows\ Endpoint\ Evidence$</field>
+    <field name="sca.check.id">^2702029$</field>
+    <description>ISO/IEC 27001:2022 A.8.32: $(sca.check.title) - passed</description>
+    <group>iso27001_A_8_32,iso27001_sca,evidence_pass,technical_evidence,</group>
+    <options>no_full_log</options>
+  </rule>
+
+  <rule id="122124" level="7">
+    <if_sid>19007</if_sid>
+    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Windows\ Endpoint\ Evidence$</field>
+    <field name="sca.check.id">^2702030$</field>
+    <description>ISO/IEC 27001:2022 A.8.23: $(sca.check.title) - failed</description>
+    <group>iso27001_A_8_23,iso27001_sca,evidence_fail,technical_evidence,</group>
+    <options>no_full_log</options>
+  </rule>
+
+  <rule id="122125" level="3">
+    <if_sid>19008</if_sid>
+    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Windows\ Endpoint\ Evidence$</field>
+    <field name="sca.check.id">^2702030$</field>
+    <description>ISO/IEC 27001:2022 A.8.23: $(sca.check.title) - passed</description>
+    <group>iso27001_A_8_23,iso27001_sca,evidence_pass,technical_evidence,</group>
+    <options>no_full_log</options>
+  </rule>
+
+  <rule id="122126" level="7">
+    <if_sid>19007</if_sid>
+    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Windows\ Endpoint\ Evidence$</field>
+    <field name="sca.check.id">^2702031$</field>
+    <description>ISO/IEC 27001:2022 A.8.34: $(sca.check.title) - failed</description>
+    <group>iso27001_A_8_34,iso27001_sca,evidence_fail,technical_evidence,</group>
+    <options>no_full_log</options>
+  </rule>
+
+  <rule id="122127" level="3">
+    <if_sid>19008</if_sid>
+    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Windows\ Endpoint\ Evidence$</field>
+    <field name="sca.check.id">^2702031$</field>
+    <description>ISO/IEC 27001:2022 A.8.34: $(sca.check.title) - passed</description>
+    <group>iso27001_A_8_34,iso27001_sca,evidence_pass,technical_evidence,</group>
+    <options>no_full_log</options>
+  </rule>
+
+</group>

@@ -1,0 +1,421 @@
+policy:
+  id: iso27001_2022_windows_endpoint
+  file: iso27001_2022_windows_endpoint.yml
+  name: ISO/IEC 27001:2022 Windows Endpoint Evidence
+  description: Technical ISO/IEC 27001:2022 endpoint evidence. Results are not certification.
+  references:
+  - ISO/IEC 27001:2022 Annex A
+  - Wazuh SCA
+checks:
+- id: 2702001
+  title: A.5.9 - Wazuh agent service is installed
+  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.5.9.
+  rationale: This check provides evidence relevant to Asset inventory; it does not prove full control implementation.
+  remediation: Install and enroll the Wazuh agent.
+  compliance:
+  - iso_27001_2022:
+    - A.5.9
+  references:
+  - ISO/IEC 27001:2022 Annex A
+  condition: all
+  rules:
+  - p:WazuhSvc
+- id: 2702002
+  title: A.5.16 - Guest account is disabled
+  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.5.16.
+  rationale: This check provides evidence relevant to Identity management; it does not prove full control implementation.
+  remediation: Disable Guest.
+  compliance:
+  - iso_27001_2022:
+    - A.5.16
+  references:
+  - ISO/IEC 27001:2022 Annex A
+  condition: all
+  rules:
+  - c:powershell -NoProfile -Command "(Get-LocalUser -Name Guest).Enabled" -> r:^False$
+- id: 2702003
+  title: A.8.2 - Built-in Administrator is disabled or renamed
+  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.2.
+  rationale: This check provides evidence relevant to Privileged access rights; it does not prove full control implementation.
+  remediation: Disable or rename the built-in Administrator.
+  compliance:
+  - iso_27001_2022:
+    - A.8.2
+  references:
+  - ISO/IEC 27001:2022 Annex A
+  condition: all
+  rules:
+  - c:powershell -NoProfile -Command "$u=Get-LocalUser | Where-Object SID -Like '*-500'; if((-not $u.Enabled) -or ($u.Name
+    -ne 'Administrator')){'Compliant'}" -> r:^Compliant$
+- id: 2702004
+  title: A.5.17 - Blank-password network logons are restricted
+  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.5.17.
+  rationale: This check provides evidence relevant to Authentication information; it does not prove full control implementation.
+  remediation: Restrict blank-password logons.
+  compliance:
+  - iso_27001_2022:
+    - A.5.17
+  references:
+  - ISO/IEC 27001:2022 Annex A
+  condition: all
+  rules:
+  - r:HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Lsa -> LimitBlankPasswordUse -> 1
+- id: 2702005
+  title: A.8.5 - Last signed-in user is hidden
+  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.5.
+  rationale: This check provides evidence relevant to Secure authentication; it does not prove full control implementation.
+  remediation: Hide the last signed-in user.
+  compliance:
+  - iso_27001_2022:
+    - A.8.5
+  references:
+  - ISO/IEC 27001:2022 Annex A
+  condition: all
+  rules:
+  - r:HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System -> DontDisplayLastUserName -> 1
+- id: 2702006
+  title: A.8.5 - Secure attention sequence is required
+  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.5.
+  rationale: This check provides evidence relevant to Secure authentication; it does not prove full control implementation.
+  remediation: Require CTRL+ALT+DEL.
+  compliance:
+  - iso_27001_2022:
+    - A.8.5
+  references:
+  - ISO/IEC 27001:2022 Annex A
+  condition: all
+  rules:
+  - r:HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System -> DisableCAD -> 0
+- id: 2702007
+  title: A.8.5 - Minimum password length is at least 14
+  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.5.
+  rationale: This check provides evidence relevant to Secure authentication; it does not prove full control implementation.
+  remediation: Set minimum password length to at least 14.
+  compliance:
+  - iso_27001_2022:
+    - A.8.5
+  references:
+  - ISO/IEC 27001:2022 Annex A
+  condition: all
+  rules:
+  - c:net accounts -> r:Minimum password length:\s+(1[4-9]|[2-9][0-9])
+- id: 2702008
+  title: A.5.17 - Credential storage is disabled
+  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.5.17.
+  rationale: This check provides evidence relevant to Authentication information; it does not prove full control implementation.
+  remediation: Disable stored network credentials.
+  compliance:
+  - iso_27001_2022:
+    - A.5.17
+  references:
+  - ISO/IEC 27001:2022 Annex A
+  condition: all
+  rules:
+  - r:HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Lsa -> DisableDomainCreds -> 1
+- id: 2702009
+  title: A.5.17 - LM hashes are not stored
+  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.5.17.
+  rationale: This check provides evidence relevant to Authentication information; it does not prove full control implementation.
+  remediation: Disable LM hash storage.
+  compliance:
+  - iso_27001_2022:
+    - A.5.17
+  references:
+  - ISO/IEC 27001:2022 Annex A
+  condition: all
+  rules:
+  - r:HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Lsa -> NoLMHash -> 1
+- id: 2702010
+  title: A.8.7 - Defender real-time protection is enabled
+  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.7.
+  rationale: This check provides evidence relevant to Protection against malware; it does not prove full control implementation.
+  remediation: Enable approved endpoint protection.
+  compliance:
+  - iso_27001_2022:
+    - A.8.7
+  references:
+  - ISO/IEC 27001:2022 Annex A
+  condition: all
+  rules:
+  - c:powershell -NoProfile -Command "(Get-MpComputerStatus).RealTimeProtectionEnabled" -> r:^True$
+- id: 2702011
+  title: A.8.8 - Windows Update is enabled
+  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.8.
+  rationale: This check provides evidence relevant to Management of technical vulnerabilities; it does not prove full control
+    implementation.
+  remediation: Enable Windows Update.
+  compliance:
+  - iso_27001_2022:
+    - A.8.8
+  references:
+  - ISO/IEC 27001:2022 Annex A
+  condition: all
+  rules:
+  - c:powershell -NoProfile -Command "(Get-Service wuauserv).StartType" -> r:^(Automatic|Manual)$
+- id: 2702012
+  title: A.8.20 - Firewall is enabled for all profiles
+  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.20.
+  rationale: This check provides evidence relevant to Networks security; it does not prove full control implementation.
+  remediation: Enable all firewall profiles.
+  compliance:
+  - iso_27001_2022:
+    - A.8.20
+  references:
+  - ISO/IEC 27001:2022 Annex A
+  condition: all
+  rules:
+  - c:powershell -NoProfile -Command "(Get-NetFirewallProfile | Where-Object Enabled -eq $false).Count" -> r:^0$
+- id: 2702013
+  title: A.8.20 - Inbound firewall defaults to block
+  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.20.
+  rationale: This check provides evidence relevant to Networks security; it does not prove full control implementation.
+  remediation: Set inbound default to Block.
+  compliance:
+  - iso_27001_2022:
+    - A.8.20
+  references:
+  - ISO/IEC 27001:2022 Annex A
+  condition: all
+  rules:
+  - c:powershell -NoProfile -Command "(Get-NetFirewallProfile | Where-Object DefaultInboundAction -ne 'Block').Count" -> r:^0$
+- id: 2702014
+  title: A.8.21 - SMBv1 is disabled
+  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.21.
+  rationale: This check provides evidence relevant to Security of network services; it does not prove full control implementation.
+  remediation: Disable SMBv1.
+  compliance:
+  - iso_27001_2022:
+    - A.8.21
+  references:
+  - ISO/IEC 27001:2022 Annex A
+  condition: all
+  rules:
+  - c:powershell -NoProfile -Command "(Get-WindowsOptionalFeature -Online -FeatureName SMB1Protocol).State" -> r:^(Disabled|Disable
+    Pending)$
+- id: 2702015
+  title: A.8.24 - SMB server signing is required
+  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.24.
+  rationale: This check provides evidence relevant to Use of cryptography; it does not prove full control implementation.
+  remediation: Require SMB server signing.
+  compliance:
+  - iso_27001_2022:
+    - A.8.24
+  references:
+  - ISO/IEC 27001:2022 Annex A
+  condition: all
+  rules:
+  - r:HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\LanmanServer\Parameters -> RequireSecuritySignature -> 1
+- id: 2702016
+  title: A.8.24 - BitLocker protects the OS volume
+  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.24.
+  rationale: This check provides evidence relevant to Use of cryptography; it does not prove full control implementation.
+  remediation: Enable BitLocker.
+  compliance:
+  - iso_27001_2022:
+    - A.8.24
+  references:
+  - ISO/IEC 27001:2022 Annex A
+  condition: all
+  rules:
+  - c:powershell -NoProfile -Command "(Get-BitLockerVolume -MountPoint $env:SystemDrive).ProtectionStatus" -> r:^On$
+- id: 2702017
+  title: A.8.15 - Security log is at least 1 GB
+  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.15.
+  rationale: This check provides evidence relevant to Logging; it does not prove full control implementation.
+  remediation: Increase Security log capacity.
+  compliance:
+  - iso_27001_2022:
+    - A.8.15
+  references:
+  - ISO/IEC 27001:2022 Annex A
+  condition: all
+  rules:
+  - 'c:powershell -NoProfile -Command "(Get-WinEvent -ListLog Security).MaximumSizeInBytes" -> n: compare >= 1073741824'
+- id: 2702018
+  title: A.8.15 - Logon auditing records success and failure
+  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.15.
+  rationale: This check provides evidence relevant to Logging; it does not prove full control implementation.
+  remediation: Enable logon auditing.
+  compliance:
+  - iso_27001_2022:
+    - A.8.15
+  references:
+  - ISO/IEC 27001:2022 Annex A
+  condition: all
+  rules:
+  - c:auditpol /get /subcategory:"Logon" -> r:(Success and Failure|Success, Failure)
+- id: 2702019
+  title: A.8.16 - PowerShell script-block logging is enabled
+  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.16.
+  rationale: This check provides evidence relevant to Monitoring activities; it does not prove full control implementation.
+  remediation: Enable script-block logging.
+  compliance:
+  - iso_27001_2022:
+    - A.8.16
+  references:
+  - ISO/IEC 27001:2022 Annex A
+  condition: all
+  rules:
+  - r:HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging -> EnableScriptBlockLogging ->
+    1
+- id: 2702020
+  title: A.8.17 - Windows Time is running
+  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.17.
+  rationale: This check provides evidence relevant to Clock synchronization; it does not prove full control implementation.
+  remediation: Start Windows Time.
+  compliance:
+  - iso_27001_2022:
+    - A.8.17
+  references:
+  - ISO/IEC 27001:2022 Annex A
+  condition: all
+  rules:
+  - c:powershell -NoProfile -Command "(Get-Service W32Time).Status" -> r:^Running$
+- id: 2702021
+  title: A.8.5 - RDP requires NLA
+  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.5.
+  rationale: This check provides evidence relevant to Secure authentication; it does not prove full control implementation.
+  remediation: Require NLA.
+  compliance:
+  - iso_27001_2022:
+    - A.8.5
+  references:
+  - ISO/IEC 27001:2022 Annex A
+  condition: all
+  rules:
+  - r:HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp -> UserAuthentication -> 1
+- id: 2702022
+  title: A.8.3 - Anonymous SAM enumeration is restricted
+  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.3.
+  rationale: This check provides evidence relevant to Information access restriction; it does not prove full control implementation.
+  remediation: Restrict anonymous enumeration.
+  compliance:
+  - iso_27001_2022:
+    - A.8.3
+  references:
+  - ISO/IEC 27001:2022 Annex A
+  condition: all
+  rules:
+  - r:HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Lsa -> RestrictAnonymousSAM -> 1
+- id: 2702023
+  title: A.7.10 - AutoRun is disabled
+  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.7.10.
+  rationale: This check provides evidence relevant to Storage media; it does not prove full control implementation.
+  remediation: Disable AutoRun.
+  compliance:
+  - iso_27001_2022:
+    - A.7.10
+  references:
+  - ISO/IEC 27001:2022 Annex A
+  condition: all
+  rules:
+  - r:HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer -> NoDriveTypeAutoRun -> 255
+- id: 2702024
+  title: A.8.13 - Backup service is active
+  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.13.
+  rationale: This check provides evidence relevant to Information backup; it does not prove full control implementation.
+  remediation: Enable approved backups.
+  compliance:
+  - iso_27001_2022:
+    - A.8.13
+  references:
+  - ISO/IEC 27001:2022 Annex A
+  condition: all
+  rules:
+  - c:powershell -NoProfile -Command "$s=Get-Service -Name wbengine,VeeamEndpointBackupSvc -ErrorAction SilentlyContinue |
+    Where-Object Status -eq Running; if($s){'active'}" -> r:^active$
+- id: 2702025
+  title: A.8.6 - System drive has at least 10 percent free
+  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.6.
+  rationale: This check provides evidence relevant to Capacity management; it does not prove full control implementation.
+  remediation: Restore capacity.
+  compliance:
+  - iso_27001_2022:
+    - A.8.6
+  references:
+  - ISO/IEC 27001:2022 Annex A
+  condition: all
+  rules:
+  - 'c:powershell -NoProfile -Command "$d=Get-CimInstance Win32_LogicalDisk -Filter \"DeviceID=''$env:SystemDrive''\"; [math]::Round(($d.FreeSpace/$d.Size)*100)"
+    -> n: compare >= 10'
+- id: 2702026
+  title: A.8.18 - Remote Registry is disabled
+  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.18.
+  rationale: This check provides evidence relevant to Use of privileged utility programs; it does not prove full control implementation.
+  remediation: Disable Remote Registry.
+  compliance:
+  - iso_27001_2022:
+    - A.8.18
+  references:
+  - ISO/IEC 27001:2022 Annex A
+  condition: all
+  rules:
+  - c:powershell -NoProfile -Command "(Get-Service RemoteRegistry).StartType" -> r:^Disabled$
+- id: 2702027
+  title: A.8.31 - Developer Mode is disabled
+  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.31.
+  rationale: This check provides evidence relevant to Separation of development, test and production environments; it does
+    not prove full control implementation.
+  remediation: Disable Developer Mode.
+  compliance:
+  - iso_27001_2022:
+    - A.8.31
+  references:
+  - ISO/IEC 27001:2022 Annex A
+  condition: all
+  rules:
+  - not r:HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\AppModelUnlock -> AllowDevelopmentWithoutDevLicense
+    -> 1
+- id: 2702028
+  title: A.8.19 - AlwaysInstallElevated is disabled
+  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.19.
+  rationale: This check provides evidence relevant to Installation of software on operational systems; it does not prove full
+    control implementation.
+  remediation: Disable AlwaysInstallElevated.
+  compliance:
+  - iso_27001_2022:
+    - A.8.19
+  references:
+  - ISO/IEC 27001:2022 Annex A
+  condition: all
+  rules:
+  - not r:HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\Installer -> AlwaysInstallElevated -> 1
+- id: 2702029
+  title: A.8.32 - Wazuh FIM is configured
+  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.32.
+  rationale: This check provides evidence relevant to Change management; it does not prove full control implementation.
+  remediation: Enable FIM.
+  compliance:
+  - iso_27001_2022:
+    - A.8.32
+  references:
+  - ISO/IEC 27001:2022 Annex A
+  condition: all
+  rules:
+  - f:C:\Program Files (x86)\ossec-agent\ossec.conf -> r:<syscheck>
+- id: 2702030
+  title: A.8.23 - Edge SmartScreen is enabled
+  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.23.
+  rationale: This check provides evidence relevant to Web filtering; it does not prove full control implementation.
+  remediation: Enable enterprise web filtering.
+  compliance:
+  - iso_27001_2022:
+    - A.8.23
+  references:
+  - ISO/IEC 27001:2022 Annex A
+  condition: all
+  rules:
+  - r:HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Edge -> SmartScreenEnabled -> 1
+- id: 2702031
+  title: A.8.34 - Audit-policy changes are recorded
+  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.34.
+  rationale: This check provides evidence relevant to Protection during audit testing; it does not prove full control implementation.
+  remediation: Audit policy changes.
+  compliance:
+  - iso_27001_2022:
+    - A.8.34
+  references:
+  - ISO/IEC 27001:2022 Annex A
+  condition: all
+  rules:
+  - c:auditpol /get /subcategory:"Audit Policy Change" -> r:(Success and Failure|Success, Failure|Success)

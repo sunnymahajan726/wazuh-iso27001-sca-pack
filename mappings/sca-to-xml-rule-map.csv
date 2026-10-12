@@ -1,0 +1,129 @@
+manager_rule_id,sca_check_id,result,iso_control,check_title
+122000,2701001,failed,A.5.9,A.5.9 - Wazuh agent is installed
+122001,2701001,passed,A.5.9,A.5.9 - Wazuh agent is installed
+122002,2701002,failed,A.8.2,A.8.2 - No UID 0 accounts other than root
+122003,2701002,passed,A.8.2,A.8.2 - No UID 0 accounts other than root
+122004,2701003,failed,A.8.2,A.8.2 - Root SSH login is disabled
+122005,2701003,passed,A.8.2,A.8.2 - Root SSH login is disabled
+122006,2701004,failed,A.8.5,A.8.5 - SSH password authentication is disabled
+122007,2701004,passed,A.8.5,A.8.5 - SSH password authentication is disabled
+122008,2701005,failed,A.5.17,A.5.17 - SSH empty passwords are disabled
+122009,2701005,passed,A.5.17,A.5.17 - SSH empty passwords are disabled
+122010,2701006,failed,A.8.5,A.8.5 - PAM password quality is configured
+122011,2701006,passed,A.8.5,A.8.5 - PAM password quality is configured
+122012,2701007,failed,A.5.18,A.5.18 - Dormant accounts have an inactivity period
+122013,2701007,passed,A.5.18,A.5.18 - Dormant accounts have an inactivity period
+122014,2701008,failed,A.8.2,A.8.2 - Sudo commands require authentication
+122015,2701008,passed,A.8.2,A.8.2 - Sudo commands require authentication
+122016,2701009,failed,A.8.18,A.8.18 - Sudo uses a pseudo-terminal
+122017,2701009,passed,A.8.18,A.8.18 - Sudo uses a pseudo-terminal
+122018,2701010,failed,A.8.15,A.8.15 - Audit daemon is active
+122019,2701010,passed,A.8.15,A.8.15 - Audit daemon is active
+122020,2701011,failed,A.8.15,A.8.15 - Audit rules are immutable
+122021,2701011,passed,A.8.15,A.8.15 - Audit rules are immutable
+122022,2701012,failed,A.8.15,A.8.15 - Authentication log exists
+122023,2701012,passed,A.8.15,A.8.15 - Authentication log exists
+122024,2701013,failed,A.8.15,A.8.15 - Persistent journal storage is configured
+122025,2701013,passed,A.8.15,A.8.15 - Persistent journal storage is configured
+122026,2701014,failed,A.8.16,A.8.16 - Remote log forwarding is configured
+122027,2701014,passed,A.8.16,A.8.16 - Remote log forwarding is configured
+122028,2701015,failed,A.8.17,A.8.17 - Clock synchronization is active
+122029,2701015,passed,A.8.17,A.8.17 - Clock synchronization is active
+122030,2701016,failed,A.8.20,A.8.20 - Host firewall is active
+122031,2701016,passed,A.8.20,A.8.20 - Host firewall is active
+122032,2701017,failed,A.8.22,A.8.22 - IP forwarding is disabled
+122033,2701017,passed,A.8.22,A.8.22 - IP forwarding is disabled
+122034,2701018,failed,A.8.20,A.8.20 - Source routing is disabled
+122035,2701018,passed,A.8.20,A.8.20 - Source routing is disabled
+122036,2701019,failed,A.8.24,A.8.24 - Private keys are not world-readable
+122037,2701019,passed,A.8.24,A.8.24 - Private keys are not world-readable
+122038,2701020,failed,A.8.24,A.8.24 - Disk encryption is present
+122039,2701020,passed,A.8.24,A.8.24 - Disk encryption is present
+122040,2701021,failed,A.8.8,A.8.8 - Automatic security updates are enabled
+122041,2701021,passed,A.8.8,A.8.8 - Automatic security updates are enabled
+122042,2701022,failed,A.8.7,A.8.7 - Endpoint protection is active
+122043,2701022,passed,A.8.7,A.8.7 - Endpoint protection is active
+122044,2701023,failed,A.8.12,A.8.12 - Core dumps are restricted
+122045,2701023,passed,A.8.12,A.8.12 - Core dumps are restricted
+122046,2701024,failed,A.7.10,A.7.10 - USB storage is disabled where required
+122047,2701024,passed,A.7.10,A.7.10 - USB storage is disabled where required
+122048,2701025,failed,A.8.13,A.8.13 - Backup service or success marker exists
+122049,2701025,passed,A.8.13,A.8.13 - Backup service or success marker exists
+122050,2701026,failed,A.8.6,A.8.6 - Root filesystem use is below 90 percent
+122051,2701026,passed,A.8.6,A.8.6 - Root filesystem use is below 90 percent
+122052,2701027,failed,A.8.21,A.8.21 - Legacy network services are absent
+122053,2701027,passed,A.8.21,A.8.21 - Legacy network services are absent
+122054,2701028,failed,A.8.23,A.8.23 - Web filtering agent is active
+122055,2701028,passed,A.8.23,A.8.23 - Web filtering agent is active
+122056,2701029,failed,A.8.26,A.8.26 - Application workers do not run as root
+122057,2701029,passed,A.8.26,A.8.26 - Application workers do not run as root
+122058,2701030,failed,A.8.31,A.8.31 - Development tools are absent from production
+122059,2701030,passed,A.8.31,A.8.31 - Development tools are absent from production
+122060,2701031,failed,A.8.32,A.8.32 - Package-manager history is available
+122061,2701031,passed,A.8.32,A.8.32 - Package-manager history is available
+122062,2701032,failed,A.8.32,A.8.32 - Wazuh FIM is configured
+122063,2701032,passed,A.8.32,A.8.32 - Wazuh FIM is configured
+122064,2701033,failed,A.8.34,A.8.34 - Audit utility access is restricted
+122065,2701033,passed,A.8.34,A.8.34 - Audit utility access is restricted
+122066,2702001,failed,A.5.9,A.5.9 - Wazuh agent service is installed
+122067,2702001,passed,A.5.9,A.5.9 - Wazuh agent service is installed
+122068,2702002,failed,A.5.16,A.5.16 - Guest account is disabled
+122069,2702002,passed,A.5.16,A.5.16 - Guest account is disabled
+122070,2702003,failed,A.8.2,A.8.2 - Built-in Administrator is disabled or renamed
+122071,2702003,passed,A.8.2,A.8.2 - Built-in Administrator is disabled or renamed
+122072,2702004,failed,A.5.17,A.5.17 - Blank-password network logons are restricted
+122073,2702004,passed,A.5.17,A.5.17 - Blank-password network logons are restricted
+122074,2702005,failed,A.8.5,A.8.5 - Last signed-in user is hidden
+122075,2702005,passed,A.8.5,A.8.5 - Last signed-in user is hidden
+122076,2702006,failed,A.8.5,A.8.5 - Secure attention sequence is required
+122077,2702006,passed,A.8.5,A.8.5 - Secure attention sequence is required
+122078,2702007,failed,A.8.5,A.8.5 - Minimum password length is at least 14
+122079,2702007,passed,A.8.5,A.8.5 - Minimum password length is at least 14
+122080,2702008,failed,A.5.17,A.5.17 - Credential storage is disabled
+122081,2702008,passed,A.5.17,A.5.17 - Credential storage is disabled
+122082,2702009,failed,A.5.17,A.5.17 - LM hashes are not stored
+122083,2702009,passed,A.5.17,A.5.17 - LM hashes are not stored
+122084,2702010,failed,A.8.7,A.8.7 - Defender real-time protection is enabled
+122085,2702010,passed,A.8.7,A.8.7 - Defender real-time protection is enabled
+122086,2702011,failed,A.8.8,A.8.8 - Windows Update is enabled
+122087,2702011,passed,A.8.8,A.8.8 - Windows Update is enabled
+122088,2702012,failed,A.8.20,A.8.20 - Firewall is enabled for all profiles
+122089,2702012,passed,A.8.20,A.8.20 - Firewall is enabled for all profiles
+122090,2702013,failed,A.8.20,A.8.20 - Inbound firewall defaults to block
+122091,2702013,passed,A.8.20,A.8.20 - Inbound firewall defaults to block
+122092,2702014,failed,A.8.21,A.8.21 - SMBv1 is disabled
+122093,2702014,passed,A.8.21,A.8.21 - SMBv1 is disabled
+122094,2702015,failed,A.8.24,A.8.24 - SMB server signing is required
+122095,2702015,passed,A.8.24,A.8.24 - SMB server signing is required
+122096,2702016,failed,A.8.24,A.8.24 - BitLocker protects the OS volume
+122097,2702016,passed,A.8.24,A.8.24 - BitLocker protects the OS volume
+122098,2702017,failed,A.8.15,A.8.15 - Security log is at least 1 GB
+122099,2702017,passed,A.8.15,A.8.15 - Security log is at least 1 GB
+122100,2702018,failed,A.8.15,A.8.15 - Logon auditing records success and failure
+122101,2702018,passed,A.8.15,A.8.15 - Logon auditing records success and failure
+122102,2702019,failed,A.8.16,A.8.16 - PowerShell script-block logging is enabled
+122103,2702019,passed,A.8.16,A.8.16 - PowerShell script-block logging is enabled
+122104,2702020,failed,A.8.17,A.8.17 - Windows Time is running
+122105,2702020,passed,A.8.17,A.8.17 - Windows Time is running
+122106,2702021,failed,A.8.5,A.8.5 - RDP requires NLA
+122107,2702021,passed,A.8.5,A.8.5 - RDP requires NLA
+122108,2702022,failed,A.8.3,A.8.3 - Anonymous SAM enumeration is restricted
+122109,2702022,passed,A.8.3,A.8.3 - Anonymous SAM enumeration is restricted
+122110,2702023,failed,A.7.10,A.7.10 - AutoRun is disabled
+122111,2702023,passed,A.7.10,A.7.10 - AutoRun is disabled
+122112,2702024,failed,A.8.13,A.8.13 - Backup service is active
+122113,2702024,passed,A.8.13,A.8.13 - Backup service is active
+122114,2702025,failed,A.8.6,A.8.6 - System drive has at least 10 percent free
+122115,2702025,passed,A.8.6,A.8.6 - System drive has at least 10 percent free
+122116,2702026,failed,A.8.18,A.8.18 - Remote Registry is disabled
+122117,2702026,passed,A.8.18,A.8.18 - Remote Registry is disabled
+122118,2702027,failed,A.8.31,A.8.31 - Developer Mode is disabled
+122119,2702027,passed,A.8.31,A.8.31 - Developer Mode is disabled
+122120,2702028,failed,A.8.19,A.8.19 - AlwaysInstallElevated is disabled
+122121,2702028,passed,A.8.19,A.8.19 - AlwaysInstallElevated is disabled
+122122,2702029,failed,A.8.32,A.8.32 - Wazuh FIM is configured
+122123,2702029,passed,A.8.32,A.8.32 - Wazuh FIM is configured
+122124,2702030,failed,A.8.23,A.8.23 - Edge SmartScreen is enabled
+122125,2702030,passed,A.8.23,A.8.23 - Edge SmartScreen is enabled
+122126,2702031,failed,A.8.34,A.8.34 - Audit-policy changes are recorded
+122127,2702031,passed,A.8.34,A.8.34 - Audit-policy changes are recorded
