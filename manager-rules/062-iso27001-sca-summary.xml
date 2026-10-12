@@ -1,7 +1,7 @@
 <group name="iso27001_2022,sca,iso27001_sca_summary,">
   <rule id="122900" level="3">
     <if_sid>19001</if_sid>
-    <field name="sca.policy">^ISO/IEC 27001:2022 (Linux|Windows) Endpoint Evidence$</field>
+    <field name="sca.policy" type="pcre2">^ISO/IEC 27001:2022 (Linux|Windows) Endpoint Evidence$</field>
     <description>ISO/IEC 27001:2022 SCA summary: $(sca.policy), score $(sca.score)</description>
     <group>iso27001_sca_summary,technical_evidence,</group>
   </rule>

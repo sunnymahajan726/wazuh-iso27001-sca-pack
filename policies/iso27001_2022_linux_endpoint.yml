@@ -32,7 +32,7 @@ checks:
   - ISO/IEC 27001:2022 Annex A
   condition: all
   rules:
-  - 'c:awk -F: ''($3 == 0) {print $1}'' /etc/passwd -> r:^root$'
+  - 'c:sh -c "exec 2>/dev/null; awk -F: -v r=root ''$3==0 && $1!=r'' /etc/passwd | grep -q . && echo FOUND || echo NONE" -> r:^NONE$'
 - id: 2701003
   title: A.8.2 - Root SSH login is disabled
   description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.2.
@@ -45,7 +45,7 @@ checks:
   - ISO/IEC 27001:2022 Annex A
   condition: all
   rules:
-  - c:sshd -T 2>/dev/null | grep -i '^permitrootlogin' -> r:^permitrootlogin (no|prohibit-password)$
+  - c:sh -c "exec 2>/dev/null; sshd -T | tr A-Z a-z | grep '^permitrootlogin '" -> r:^permitrootlogin no$|^permitrootlogin prohibit-password$
 - id: 2701004
   title: A.8.5 - SSH password authentication is disabled
   description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.5.
@@ -58,7 +58,7 @@ checks:
   - ISO/IEC 27001:2022 Annex A
   condition: all
   rules:
-  - c:sshd -T 2>/dev/null | grep -i '^passwordauthentication' -> r:^passwordauthentication no$
+  - c:sh -c "exec 2>/dev/null; sshd -T | tr A-Z a-z | grep '^passwordauthentication '" -> r:^passwordauthentication no$
 - id: 2701005
   title: A.5.17 - SSH empty passwords are disabled
   description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.5.17.
@@ -71,7 +71,7 @@ checks:
   - ISO/IEC 27001:2022 Annex A
   condition: all
   rules:
-  - c:sshd -T 2>/dev/null | grep -i '^permitemptypasswords' -> r:^permitemptypasswords no$
+  - c:sh -c "exec 2>/dev/null; sshd -T | tr A-Z a-z | grep '^permitemptypasswords '" -> r:^permitemptypasswords no$
 - id: 2701006
   title: A.8.5 - PAM password quality is configured
   description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.5.
@@ -84,7 +84,7 @@ checks:
   - ISO/IEC 27001:2022 Annex A
   condition: all
   rules:
-  - c:grep -RhsE 'pam_(pwquality|cracklib)\.so' /etc/pam.d -> r:pam_(pwquality|cracklib)\.so
+  - c:sh -c "exec 2>/dev/null; grep -RhsE 'pam_(pwquality|cracklib)[.]so' /etc/pam.d" -> r:pam_pwquality|pam_cracklib
 - id: 2701007
   title: A.5.18 - Dormant accounts have an inactivity period
   description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.5.18.
@@ -97,7 +97,7 @@ checks:
   - ISO/IEC 27001:2022 Annex A
   condition: all
   rules:
-  - c:useradd -D 2>/dev/null | grep '^INACTIVE=' -> !r:^INACTIVE=0$
+  - c:sh -c "exec 2>/dev/null; useradd -D | grep '^INACTIVE='" -> r:^INACTIVE=\d && !r:^INACTIVE=0$
 - id: 2701008
   title: A.8.2 - Sudo commands require authentication
   description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.2.
@@ -110,7 +110,7 @@ checks:
   - ISO/IEC 27001:2022 Annex A
   condition: all
   rules:
-  - c:grep -RhsE '^[[:space:]]*[^#].*NOPASSWD' /etc/sudoers /etc/sudoers.d 2>/dev/null -> !r:NOPASSWD
+  - c:sh -c "exec 2>/dev/null; grep -RhsE '^[[:space:]]*[^#].*NOPASSWD' /etc/sudoers /etc/sudoers.d | grep -q . && echo FOUND || echo NONE" -> r:^NONE$
 - id: 2701009
   title: A.8.18 - Sudo uses a pseudo-terminal
   description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.18.
@@ -123,7 +123,7 @@ checks:
   - ISO/IEC 27001:2022 Annex A
   condition: all
   rules:
-  - c:grep -RhsE '^[[:space:]]*Defaults.*use_pty' /etc/sudoers /etc/sudoers.d 2>/dev/null -> r:use_pty
+  - c:sh -c "exec 2>/dev/null; grep -RhsE '^[[:space:]]*Defaults.*use_pty' /etc/sudoers /etc/sudoers.d" -> r:use_pty
 - id: 2701010
   title: A.8.15 - Audit daemon is active
   description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.15.
@@ -136,7 +136,7 @@ checks:
   - ISO/IEC 27001:2022 Annex A
   condition: all
   rules:
-  - c:systemctl is-active auditd 2>/dev/null -> r:^active$
+  - c:sh -c "exec 2>/dev/null; systemctl is-active auditd" -> r:^active$
 - id: 2701011
   title: A.8.15 - Audit rules are immutable
   description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.15.
@@ -149,7 +149,7 @@ checks:
   - ISO/IEC 27001:2022 Annex A
   condition: all
   rules:
-  - c:grep -RhsE '^[[:space:]]*-e[[:space:]]+2' /etc/audit/audit.rules /etc/audit/rules.d 2>/dev/null -> r:-e[[:space:]]+2
+  - c:sh -c "exec 2>/dev/null; grep -RhsE '^[[:space:]]*-e[[:space:]]+2' /etc/audit/audit.rules /etc/audit/rules.d" -> r:-e\s+2
 - id: 2701012
   title: A.8.15 - Authentication log exists
   description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.15.
@@ -176,7 +176,7 @@ checks:
   - ISO/IEC 27001:2022 Annex A
   condition: all
   rules:
-  - c:systemd-analyze cat-config systemd/journald.conf 2>/dev/null | grep -iE '^Storage=' -> r:^Storage=persistent$
+  - c:sh -c "exec 2>/dev/null; systemd-analyze cat-config systemd/journald.conf | grep -iE '^Storage='" -> r:^Storage=persistent$
 - id: 2701014
   title: A.8.16 - Remote log forwarding is configured
   description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.16.
@@ -189,7 +189,7 @@ checks:
   - ISO/IEC 27001:2022 Annex A
   condition: all
   rules:
-  - c:grep -RhsE '^[[:space:]]*[^#].*(@@?|omfwd|target=)' /etc/rsyslog.conf /etc/rsyslog.d 2>/dev/null -> r:(@@?|omfwd|target=)
+  - c:sh -c "exec 2>/dev/null; grep -RhsE '^[[:space:]]*[^#].*(@@?|omfwd|target=)' /etc/rsyslog.conf /etc/rsyslog.d | grep -q . && echo FOUND || echo NONE" -> r:^FOUND$
 - id: 2701015
   title: A.8.17 - Clock synchronization is active
   description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.17.
@@ -202,7 +202,7 @@ checks:
   - ISO/IEC 27001:2022 Annex A
   condition: all
   rules:
-  - c:timedatectl show -p NTPSynchronized --value 2>/dev/null -> r:^yes$
+  - c:sh -c "exec 2>/dev/null; timedatectl show -p NTPSynchronized --value" -> r:^yes$
 - id: 2701016
   title: A.8.20 - Host firewall is active
   description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.20.
@@ -215,8 +215,7 @@ checks:
   - ISO/IEC 27001:2022 Annex A
   condition: all
   rules:
-  - 'c:(systemctl is-active firewalld 2>/dev/null || systemctl is-active nftables 2>/dev/null || ufw status 2>/dev/null |
-    head -1) -> r:(^active$|Status: active)'
+  - 'c:sh -c "exec 2>/dev/null; systemctl is-active firewalld; systemctl is-active nftables; ufw status | head -1" -> r:^active$|^Status: active'
 - id: 2701017
   title: A.8.22 - IP forwarding is disabled
   description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.22.
@@ -229,7 +228,7 @@ checks:
   - ISO/IEC 27001:2022 Annex A
   condition: all
   rules:
-  - c:sysctl -n net.ipv4.ip_forward -> r:^0$
+  - c:sh -c "exec 2>/dev/null; sysctl -n net.ipv4.ip_forward" -> r:^0$
 - id: 2701018
   title: A.8.20 - Source routing is disabled
   description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.20.
@@ -242,7 +241,7 @@ checks:
   - ISO/IEC 27001:2022 Annex A
   condition: all
   rules:
-  - c:sysctl -n net.ipv4.conf.all.accept_source_route -> r:^0$
+  - c:sh -c "exec 2>/dev/null; sysctl -n net.ipv4.conf.all.accept_source_route" -> r:^0$
 - id: 2701019
   title: A.8.24 - Private keys are not world-readable
   description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.24.
@@ -255,7 +254,7 @@ checks:
   - ISO/IEC 27001:2022 Annex A
   condition: all
   rules:
-  - c:find /etc -xdev -type f -name '*.key' -perm /004 -print 2>/dev/null -> !r:.
+  - c:sh -c "exec 2>/dev/null; find /etc -xdev -type f -name '*.key' -perm /004 -print | grep -q . && echo FOUND || echo NONE" -> r:^NONE$
 - id: 2701020
   title: A.8.24 - Disk encryption is present
   description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.24.
@@ -268,12 +267,11 @@ checks:
   - ISO/IEC 27001:2022 Annex A
   condition: all
   rules:
-  - c:lsblk -o TYPE,FSTYPE 2>/dev/null | grep -E '(crypt|crypto_LUKS)' -> r:(crypt|crypto_LUKS)
+  - c:sh -c "exec 2>/dev/null; lsblk -o TYPE,FSTYPE | grep -E 'crypt'" -> r:crypt
 - id: 2701021
   title: A.8.8 - Automatic security updates are enabled
   description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.8.
-  rationale: This check provides evidence relevant to Management of technical vulnerabilities; it does not prove full control
-    implementation.
+  rationale: This check provides evidence relevant to Management of technical vulnerabilities; it does not prove full control implementation.
   remediation: Enable automatic security updates.
   compliance:
   - iso_27001_2022:
@@ -282,8 +280,7 @@ checks:
   - ISO/IEC 27001:2022 Annex A
   condition: all
   rules:
-  - c:(systemctl is-enabled unattended-upgrades 2>/dev/null || systemctl is-enabled dnf-automatic.timer 2>/dev/null || systemctl
-    is-enabled yum-cron 2>/dev/null) -> r:^enabled$
+  - c:sh -c "exec 2>/dev/null; systemctl is-enabled unattended-upgrades; systemctl is-enabled dnf-automatic.timer; systemctl is-enabled yum-cron" -> r:^enabled$
 - id: 2701022
   title: A.8.7 - Endpoint protection is active
   description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.7.
@@ -296,8 +293,7 @@ checks:
   - ISO/IEC 27001:2022 Annex A
   condition: all
   rules:
-  - c:(systemctl is-active clamav-daemon 2>/dev/null || systemctl is-active clamd@scan 2>/dev/null || pgrep -x wdavdaemon
-    >/dev/null && echo active) -> r:^active$
+  - c:sh -c "exec 2>/dev/null; systemctl is-active clamav-daemon; systemctl is-active clamd@scan; pgrep -x wdavdaemon >/dev/null && echo active" -> r:^active$
 - id: 2701023
   title: A.8.12 - Core dumps are restricted
   description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.12.
@@ -310,7 +306,7 @@ checks:
   - ISO/IEC 27001:2022 Annex A
   condition: all
   rules:
-  - c:sysctl -n fs.suid_dumpable -> r:^0$
+  - c:sh -c "exec 2>/dev/null; sysctl -n fs.suid_dumpable" -> r:^0$
 - id: 2701024
   title: A.7.10 - USB storage is disabled where required
   description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.7.10.
@@ -323,7 +319,7 @@ checks:
   - ISO/IEC 27001:2022 Annex A
   condition: all
   rules:
-  - c:modprobe -n -v usb-storage 2>/dev/null -> r:(install /bin/(true|false)|blacklist usb-storage)
+  - c:sh -c "exec 2>/dev/null; modprobe -n -v usb-storage; modprobe --showconfig | grep -E '^(install|blacklist) usb[_-]storage'" -> r:/bin/true|/bin/false|^blacklist usb
 - id: 2701025
   title: A.8.13 - Backup service or success marker exists
   description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.13.
@@ -336,8 +332,7 @@ checks:
   - ISO/IEC 27001:2022 Annex A
   condition: all
   rules:
-  - c:(systemctl is-active borgmatic 2>/dev/null || systemctl is-active restic-backup.timer 2>/dev/null || test -f /var/lib/iso27001/last-backup-ok
-    && echo active) -> r:^active$
+  - c:sh -c "exec 2>/dev/null; systemctl is-active borgmatic; systemctl is-active restic-backup.timer; test -f /var/lib/iso27001/last-backup-ok && echo active" -> r:^active$
 - id: 2701026
   title: A.8.6 - Root filesystem use is below 90 percent
   description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.6.
@@ -350,7 +345,7 @@ checks:
   - ISO/IEC 27001:2022 Annex A
   condition: all
   rules:
-  - 'c:df -P / | awk ''NR==2 {gsub(/%/,"",$5); print $5}'' -> n: compare < 90'
+  - c:sh -c "exec 2>/dev/null; df -P / | awk 'NR==2 {sub(/%/,x,$5); print $5}'" -> n:^(\d+) compare < 90
 - id: 2701027
   title: A.8.21 - Legacy network services are absent
   description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.21.
@@ -363,7 +358,7 @@ checks:
   - ISO/IEC 27001:2022 Annex A
   condition: all
   rules:
-  - c:systemctl list-unit-files --type=service 2>/dev/null | grep -E '^(telnet|rsh|rlogin|rexec|tftp)\.' -> !r:.
+  - c:sh -c "exec 2>/dev/null; systemctl list-unit-files --type=service | grep -E '^(telnet|rsh|rlogin|rexec|tftp)[.@]' | grep -q . && echo FOUND || echo NONE" -> r:^NONE$
 - id: 2701028
   title: A.8.23 - Web filtering agent is active
   description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.23.
@@ -376,7 +371,7 @@ checks:
   - ISO/IEC 27001:2022 Annex A
   condition: all
   rules:
-  - c:(pgrep -x squid >/dev/null || pgrep -f 'zscaler|netskope|umbrella|websense' >/dev/null) && echo active -> r:^active$
+  - c:sh -c "exec 2>/dev/null; (pgrep -x squid || pgrep -f '[z]scaler|[n]etskope|[u]mbrella|[w]ebsense') >/dev/null && echo active" -> r:^active$
 - id: 2701029
   title: A.8.26 - Application workers do not run as root
   description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.26.
@@ -389,12 +384,11 @@ checks:
   - ISO/IEC 27001:2022 Annex A
   condition: all
   rules:
-  - c:ps -eo user=,comm= | awk '$1=="root" && $2 ~ /^(nginx|httpd|apache2|tomcat|node|java)$/ {print}' -> !r:.
+  - c:sh -c "exec 2>/dev/null; ps -eo user=,comm= | awk -v u=root '$1==u && $2 ~ /^(nginx|httpd|apache2|tomcat|node|java)$/' | grep -q . && echo FOUND || echo NONE" -> r:^NONE$
 - id: 2701030
   title: A.8.31 - Development tools are absent from production
   description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.31.
-  rationale: This check provides evidence relevant to Separation of development, test and production environments; it does
-    not prove full control implementation.
+  rationale: This check provides evidence relevant to Separation of development, test and production environments; it does not prove full control implementation.
   remediation: Remove unapproved development tools.
   compliance:
   - iso_27001_2022:
@@ -403,7 +397,7 @@ checks:
   - ISO/IEC 27001:2022 Annex A
   condition: all
   rules:
-  - c:(command -v gcc; command -v make; command -v gdb) 2>/dev/null -> !r:.
+  - c:sh -c "exec 2>/dev/null; (command -v gcc; command -v make; command -v gdb) | grep -q . && echo FOUND || echo NONE" -> r:^NONE$
 - id: 2701031
   title: A.8.32 - Package-manager history is available
   description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.32.
@@ -416,7 +410,7 @@ checks:
   - ISO/IEC 27001:2022 Annex A
   condition: all
   rules:
-  - c:(test -f /var/log/apt/history.log || test -f /var/log/dnf.log || test -f /var/log/yum.log) && echo present -> r:^present$
+  - c:sh -c "exec 2>/dev/null; (test -f /var/log/apt/history.log || test -f /var/log/dnf.log || test -f /var/log/yum.log) && echo present" -> r:^present$
 - id: 2701032
   title: A.8.32 - Wazuh FIM is configured
   description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.32.
@@ -429,7 +423,7 @@ checks:
   - ISO/IEC 27001:2022 Annex A
   condition: all
   rules:
-  - c:grep -q '<syscheck>' /var/ossec/etc/ossec.conf && echo configured -> r:^configured$
+  - c:sh -c "exec 2>/dev/null; grep -q '<syscheck>' /var/ossec/etc/ossec.conf && echo configured" -> r:^configured$
 - id: 2701033
   title: A.8.34 - Audit utility access is restricted
   description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.34.
@@ -442,4 +436,4 @@ checks:
   - ISO/IEC 27001:2022 Annex A
   condition: all
   rules:
-  - 'c:stat -Lc ''%a'' /usr/sbin/auditctl 2>/dev/null -> n: compare < 755'
+  - c:sh -c "exec 2>/dev/null; stat -Lc %a /usr/sbin/auditctl" -> n:^(\d+) compare <= 755

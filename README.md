@@ -7,3 +7,5 @@ Run the custom overlay alongside the applicable Wazuh-bundled CIS/audit policy. 
 SCA results are technical evidence, not certification. Review every threshold, service, path, backup product, encryption requirement, and applicability decision before production.
 
 Custom groups include `iso27001_2022`, `iso27001_A8_15`, `iso27001_sca`, `evidence_pass`, and `evidence_fail`.
+
+An optional Wazuh dashboard for these results is in `tools/dashboard/` (see its README).

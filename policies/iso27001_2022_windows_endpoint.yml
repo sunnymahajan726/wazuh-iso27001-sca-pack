@@ -19,7 +19,7 @@ checks:
   - ISO/IEC 27001:2022 Annex A
   condition: all
   rules:
-  - p:WazuhSvc
+  - r:HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\WazuhSvc
 - id: 2702002
   title: A.5.16 - Guest account is disabled
   description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.5.16.
@@ -32,7 +32,7 @@ checks:
   - ISO/IEC 27001:2022 Annex A
   condition: all
   rules:
-  - c:powershell -NoProfile -Command "(Get-LocalUser -Name Guest).Enabled" -> r:^False$
+  - c:powershell -NoProfile -Command "[bool](Get-CimInstance -Query 'SELECT * FROM Win32_UserAccount WHERE LocalAccount = TRUE AND SID LIKE ''S-1-5-21-%-501''' | Where-Object -Property Disabled)" -> r:^True$
 - id: 2702003
   title: A.8.2 - Built-in Administrator is disabled or renamed
   description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.2.
@@ -45,8 +45,7 @@ checks:
   - ISO/IEC 27001:2022 Annex A
   condition: all
   rules:
-  - c:powershell -NoProfile -Command "$u=Get-LocalUser | Where-Object SID -Like '*-500'; if((-not $u.Enabled) -or ($u.Name
-    -ne 'Administrator')){'Compliant'}" -> r:^Compliant$
+  - c:powershell -NoProfile -Command "$u=Get-CimInstance -Query 'SELECT * FROM Win32_UserAccount WHERE LocalAccount = TRUE AND SID LIKE ''S-1-5-21-%-500'''; if($u.Disabled -or ($u.Name -ne 'Administrator')){'Compliant'}else{'NonCompliant'}" -> r:^Compliant$
 - id: 2702004
   title: A.5.17 - Blank-password network logons are restricted
   description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.5.17.
@@ -85,7 +84,7 @@ checks:
   - ISO/IEC 27001:2022 Annex A
   condition: all
   rules:
-  - r:HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System -> DisableCAD -> 0
+  - c:powershell -NoProfile -Command "$k=[Microsoft.Win32.RegistryKey]::OpenBaseKey('LocalMachine','Registry64').OpenSubKey('Software\Microsoft\Windows\CurrentVersion\Policies\System'); $v=if($k){$k.GetValue('DisableCAD')}; if(($null -ne $v) -and ($v -eq 0)){'Set'}else{'NotSet'}" -> r:^Set$
 - id: 2702007
   title: A.8.5 - Minimum password length is at least 14
   description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.5.
@@ -98,7 +97,7 @@ checks:
   - ISO/IEC 27001:2022 Annex A
   condition: all
   rules:
-  - c:net accounts -> r:Minimum password length:\s+(1[4-9]|[2-9][0-9])
+  - c:net accounts -> n:^Minimum password length:\s+(\d+) compare >= 14
 - id: 2702008
   title: A.5.17 - Credential storage is disabled
   description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.5.17.
@@ -141,8 +140,7 @@ checks:
 - id: 2702011
   title: A.8.8 - Windows Update is enabled
   description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.8.
-  rationale: This check provides evidence relevant to Management of technical vulnerabilities; it does not prove full control
-    implementation.
+  rationale: This check provides evidence relevant to Management of technical vulnerabilities; it does not prove full control implementation.
   remediation: Enable Windows Update.
   compliance:
   - iso_27001_2022:
@@ -151,7 +149,7 @@ checks:
   - ISO/IEC 27001:2022 Annex A
   condition: all
   rules:
-  - c:powershell -NoProfile -Command "(Get-Service wuauserv).StartType" -> r:^(Automatic|Manual)$
+  - c:powershell -NoProfile -Command "(Get-Service wuauserv).StartType" -> r:^Automatic$|^Manual$
 - id: 2702012
   title: A.8.20 - Firewall is enabled for all profiles
   description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.20.
@@ -164,7 +162,7 @@ checks:
   - ISO/IEC 27001:2022 Annex A
   condition: all
   rules:
-  - c:powershell -NoProfile -Command "(Get-NetFirewallProfile | Where-Object Enabled -eq $false).Count" -> r:^0$
+  - c:powershell -NoProfile -Command "@(Get-NetFirewallProfile -PolicyStore ActiveStore | Where-Object {$_.Enabled -ne 'True'}).Count" -> r:^0$
 - id: 2702013
   title: A.8.20 - Inbound firewall defaults to block
   description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.20.
@@ -177,7 +175,7 @@ checks:
   - ISO/IEC 27001:2022 Annex A
   condition: all
   rules:
-  - c:powershell -NoProfile -Command "(Get-NetFirewallProfile | Where-Object DefaultInboundAction -ne 'Block').Count" -> r:^0$
+  - c:powershell -NoProfile -Command "@(Get-NetFirewallProfile -PolicyStore ActiveStore | Where-Object {$_.DefaultInboundAction -ne 'Block'}).Count" -> r:^0$
 - id: 2702014
   title: A.8.21 - SMBv1 is disabled
   description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.21.
@@ -190,8 +188,7 @@ checks:
   - ISO/IEC 27001:2022 Annex A
   condition: all
   rules:
-  - c:powershell -NoProfile -Command "(Get-WindowsOptionalFeature -Online -FeatureName SMB1Protocol).State" -> r:^(Disabled|Disable
-    Pending)$
+  - c:powershell -NoProfile -Command "(Get-SmbServerConfiguration).EnableSMB1Protocol" -> r:^False$
 - id: 2702015
   title: A.8.24 - SMB server signing is required
   description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.24.
@@ -204,7 +201,7 @@ checks:
   - ISO/IEC 27001:2022 Annex A
   condition: all
   rules:
-  - r:HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\LanmanServer\Parameters -> RequireSecuritySignature -> 1
+  - c:powershell -NoProfile -Command "$k=[Microsoft.Win32.RegistryKey]::OpenBaseKey('LocalMachine','Registry64').OpenSubKey('System\CurrentControlSet\Services\LanmanServer\Parameters'); $v=if($k){$k.GetValue('RequireSecuritySignature')}; if(($null -ne $v) -and ($v -eq 1)){'Set'}else{'NotSet'}" -> r:^Set$
 - id: 2702016
   title: A.8.24 - BitLocker protects the OS volume
   description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.24.
@@ -217,7 +214,7 @@ checks:
   - ISO/IEC 27001:2022 Annex A
   condition: all
   rules:
-  - c:powershell -NoProfile -Command "(Get-BitLockerVolume -MountPoint $env:SystemDrive).ProtectionStatus" -> r:^On$
+  - c:powershell -NoProfile -Command "(Get-CimInstance -Namespace root/CIMV2/Security/MicrosoftVolumeEncryption -ClassName Win32_EncryptableVolume | Where-Object {$_.DriveLetter -eq $env:SystemDrive}).ProtectionStatus" -> r:^1$
 - id: 2702017
   title: A.8.15 - Security log is at least 1 GB
   description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.15.
@@ -230,7 +227,7 @@ checks:
   - ISO/IEC 27001:2022 Annex A
   condition: all
   rules:
-  - 'c:powershell -NoProfile -Command "(Get-WinEvent -ListLog Security).MaximumSizeInBytes" -> n: compare >= 1073741824'
+  - c:powershell -NoProfile -Command "[math]::Floor((Get-WinEvent -ListLog Security).MaximumSizeInBytes / 1MB)" -> n:^(\d+) compare >= 1024
 - id: 2702018
   title: A.8.15 - Logon auditing records success and failure
   description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.15.
@@ -243,7 +240,7 @@ checks:
   - ISO/IEC 27001:2022 Annex A
   condition: all
   rules:
-  - c:auditpol /get /subcategory:"Logon" -> r:(Success and Failure|Success, Failure)
+  - c:auditpol.exe /get /subcategory:"Logon" -> r:Success and Failure
 - id: 2702019
   title: A.8.16 - PowerShell script-block logging is enabled
   description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.16.
@@ -256,8 +253,7 @@ checks:
   - ISO/IEC 27001:2022 Annex A
   condition: all
   rules:
-  - r:HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging -> EnableScriptBlockLogging ->
-    1
+  - c:powershell -NoProfile -Command "$k=[Microsoft.Win32.RegistryKey]::OpenBaseKey('LocalMachine','Registry64').OpenSubKey('Software\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging'); $v=if($k){$k.GetValue('EnableScriptBlockLogging')}; if(($null -ne $v) -and ($v -eq 1)){'Set'}else{'NotSet'}" -> r:^Set$
 - id: 2702020
   title: A.8.17 - Windows Time is running
   description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.17.
@@ -309,7 +305,7 @@ checks:
   - ISO/IEC 27001:2022 Annex A
   condition: all
   rules:
-  - r:HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer -> NoDriveTypeAutoRun -> 255
+  - c:powershell -NoProfile -Command "$k=[Microsoft.Win32.RegistryKey]::OpenBaseKey('LocalMachine','Registry64').OpenSubKey('Software\Microsoft\Windows\CurrentVersion\Policies\Explorer'); $v=if($k){$k.GetValue('NoDriveTypeAutoRun')}; if(($null -ne $v) -and ($v -eq 255)){'Set'}else{'NotSet'}" -> r:^Set$
 - id: 2702024
   title: A.8.13 - Backup service is active
   description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.13.
@@ -322,8 +318,7 @@ checks:
   - ISO/IEC 27001:2022 Annex A
   condition: all
   rules:
-  - c:powershell -NoProfile -Command "$s=Get-Service -Name wbengine,VeeamEndpointBackupSvc -ErrorAction SilentlyContinue |
-    Where-Object Status -eq Running; if($s){'active'}" -> r:^active$
+  - c:powershell -NoProfile -Command "$s=Get-Service -Name wbengine,VeeamEndpointBackupSvc -ErrorAction SilentlyContinue | Where-Object {$_.Status -eq 'Running'}; if($s){'active'}else{'inactive'}" -> r:^active$
 - id: 2702025
   title: A.8.6 - System drive has at least 10 percent free
   description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.6.
@@ -336,8 +331,7 @@ checks:
   - ISO/IEC 27001:2022 Annex A
   condition: all
   rules:
-  - 'c:powershell -NoProfile -Command "$d=Get-CimInstance Win32_LogicalDisk -Filter \"DeviceID=''$env:SystemDrive''\"; [math]::Round(($d.FreeSpace/$d.Size)*100)"
-    -> n: compare >= 10'
+  - c:powershell -NoProfile -Command "$d=Get-CimInstance Win32_LogicalDisk | Where-Object {$_.DeviceID -eq $env:SystemDrive}; [math]::Floor($d.FreeSpace * 100 / $d.Size)" -> n:^(\d+) compare >= 10
 - id: 2702026
   title: A.8.18 - Remote Registry is disabled
   description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.18.
@@ -354,8 +348,7 @@ checks:
 - id: 2702027
   title: A.8.31 - Developer Mode is disabled
   description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.31.
-  rationale: This check provides evidence relevant to Separation of development, test and production environments; it does
-    not prove full control implementation.
+  rationale: This check provides evidence relevant to Separation of development, test and production environments; it does not prove full control implementation.
   remediation: Disable Developer Mode.
   compliance:
   - iso_27001_2022:
@@ -364,13 +357,11 @@ checks:
   - ISO/IEC 27001:2022 Annex A
   condition: all
   rules:
-  - not r:HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\AppModelUnlock -> AllowDevelopmentWithoutDevLicense
-    -> 1
+  - c:powershell -NoProfile -Command "$k=[Microsoft.Win32.RegistryKey]::OpenBaseKey('LocalMachine','Registry64').OpenSubKey('Software\Microsoft\Windows\CurrentVersion\AppModelUnlock'); $v=if($k){$k.GetValue('AllowDevelopmentWithoutDevLicense')}; if(($null -ne $v) -and ($v -eq 1)){'Enabled'}else{'Disabled'}" -> r:^Disabled$
 - id: 2702028
   title: A.8.19 - AlwaysInstallElevated is disabled
   description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.19.
-  rationale: This check provides evidence relevant to Installation of software on operational systems; it does not prove full
-    control implementation.
+  rationale: This check provides evidence relevant to Installation of software on operational systems; it does not prove full control implementation.
   remediation: Disable AlwaysInstallElevated.
   compliance:
   - iso_27001_2022:
@@ -379,7 +370,7 @@ checks:
   - ISO/IEC 27001:2022 Annex A
   condition: all
   rules:
-  - not r:HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\Installer -> AlwaysInstallElevated -> 1
+  - c:powershell -NoProfile -Command "$k=[Microsoft.Win32.RegistryKey]::OpenBaseKey('LocalMachine','Registry64').OpenSubKey('Software\Policies\Microsoft\Windows\Installer'); $v=if($k){$k.GetValue('AlwaysInstallElevated')}; if(($null -ne $v) -and ($v -eq 1)){'Enabled'}else{'Disabled'}" -> r:^Disabled$
 - id: 2702029
   title: A.8.32 - Wazuh FIM is configured
   description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.32.
@@ -405,7 +396,7 @@ checks:
   - ISO/IEC 27001:2022 Annex A
   condition: all
   rules:
-  - r:HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Edge -> SmartScreenEnabled -> 1
+  - c:powershell -NoProfile -Command "$k=[Microsoft.Win32.RegistryKey]::OpenBaseKey('LocalMachine','Registry64').OpenSubKey('Software\Policies\Microsoft\Edge'); $v=if($k){$k.GetValue('SmartScreenEnabled')}; if(($null -ne $v) -and ($v -eq 1)){'Set'}else{'NotSet'}" -> r:^Set$
 - id: 2702031
   title: A.8.34 - Audit-policy changes are recorded
   description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.34.
@@ -418,4 +409,4 @@ checks:
   - ISO/IEC 27001:2022 Annex A
   condition: all
   rules:
-  - c:auditpol /get /subcategory:"Audit Policy Change" -> r:(Success and Failure|Success, Failure|Success)
+  - c:auditpol.exe /get /subcategory:"Audit Policy Change" -> r:Success
