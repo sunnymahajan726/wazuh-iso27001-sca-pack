@@ -1,0 +1,2 @@
+# Copy current ISO 27001 SCA results from wazuh-db to the wazuh-iso27001-state index (ISO 27001 dashboard)
+*/15 * * * * root /usr/local/bin/wazuh-iso27001-state-sync >> /var/log/wazuh-iso27001-sync.log 2>&1
