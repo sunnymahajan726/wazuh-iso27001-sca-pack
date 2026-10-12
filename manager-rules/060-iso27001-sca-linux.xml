@@ -1,7 +1,7 @@
 <group name="iso27001_2022,sca,iso27001_sca_evidence,">
   <rule id="122000" level="7">
     <if_sid>19007</if_sid>
-    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
+    <field name="sca.policy" type="pcre2">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
     <field name="sca.check.id">^2701001$</field>
     <description>ISO/IEC 27001:2022 A.5.9: $(sca.check.title) - failed</description>
     <group>iso27001_A_5_9,iso27001_sca,evidence_fail,technical_evidence,</group>
@@ -10,7 +10,7 @@
 
   <rule id="122001" level="3">
     <if_sid>19008</if_sid>
-    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
+    <field name="sca.policy" type="pcre2">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
     <field name="sca.check.id">^2701001$</field>
     <description>ISO/IEC 27001:2022 A.5.9: $(sca.check.title) - passed</description>
     <group>iso27001_A_5_9,iso27001_sca,evidence_pass,technical_evidence,</group>
@@ -19,7 +19,7 @@
 
   <rule id="122002" level="7">
     <if_sid>19007</if_sid>
-    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
+    <field name="sca.policy" type="pcre2">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
     <field name="sca.check.id">^2701002$</field>
     <description>ISO/IEC 27001:2022 A.8.2: $(sca.check.title) - failed</description>
     <group>iso27001_A_8_2,iso27001_sca,evidence_fail,technical_evidence,</group>
@@ -28,7 +28,7 @@
 
   <rule id="122003" level="3">
     <if_sid>19008</if_sid>
-    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
+    <field name="sca.policy" type="pcre2">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
     <field name="sca.check.id">^2701002$</field>
     <description>ISO/IEC 27001:2022 A.8.2: $(sca.check.title) - passed</description>
     <group>iso27001_A_8_2,iso27001_sca,evidence_pass,technical_evidence,</group>
@@ -37,7 +37,7 @@
 
   <rule id="122004" level="7">
     <if_sid>19007</if_sid>
-    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
+    <field name="sca.policy" type="pcre2">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
     <field name="sca.check.id">^2701003$</field>
     <description>ISO/IEC 27001:2022 A.8.2: $(sca.check.title) - failed</description>
     <group>iso27001_A_8_2,iso27001_sca,evidence_fail,technical_evidence,</group>
@@ -46,7 +46,7 @@
 
   <rule id="122005" level="3">
     <if_sid>19008</if_sid>
-    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
+    <field name="sca.policy" type="pcre2">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
     <field name="sca.check.id">^2701003$</field>
     <description>ISO/IEC 27001:2022 A.8.2: $(sca.check.title) - passed</description>
     <group>iso27001_A_8_2,iso27001_sca,evidence_pass,technical_evidence,</group>
@@ -55,7 +55,7 @@
 
   <rule id="122006" level="7">
     <if_sid>19007</if_sid>
-    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
+    <field name="sca.policy" type="pcre2">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
     <field name="sca.check.id">^2701004$</field>
     <description>ISO/IEC 27001:2022 A.8.5: $(sca.check.title) - failed</description>
     <group>iso27001_A_8_5,iso27001_sca,evidence_fail,technical_evidence,</group>
@@ -64,7 +64,7 @@
 
   <rule id="122007" level="3">
     <if_sid>19008</if_sid>
-    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
+    <field name="sca.policy" type="pcre2">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
     <field name="sca.check.id">^2701004$</field>
     <description>ISO/IEC 27001:2022 A.8.5: $(sca.check.title) - passed</description>
     <group>iso27001_A_8_5,iso27001_sca,evidence_pass,technical_evidence,</group>
@@ -73,7 +73,7 @@
 
   <rule id="122008" level="7">
     <if_sid>19007</if_sid>
-    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
+    <field name="sca.policy" type="pcre2">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
     <field name="sca.check.id">^2701005$</field>
     <description>ISO/IEC 27001:2022 A.5.17: $(sca.check.title) - failed</description>
     <group>iso27001_A_5_17,iso27001_sca,evidence_fail,technical_evidence,</group>
@@ -82,7 +82,7 @@
 
   <rule id="122009" level="3">
     <if_sid>19008</if_sid>
-    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
+    <field name="sca.policy" type="pcre2">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
     <field name="sca.check.id">^2701005$</field>
     <description>ISO/IEC 27001:2022 A.5.17: $(sca.check.title) - passed</description>
     <group>iso27001_A_5_17,iso27001_sca,evidence_pass,technical_evidence,</group>
@@ -91,7 +91,7 @@
 
   <rule id="122010" level="7">
     <if_sid>19007</if_sid>
-    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
+    <field name="sca.policy" type="pcre2">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
     <field name="sca.check.id">^2701006$</field>
     <description>ISO/IEC 27001:2022 A.8.5: $(sca.check.title) - failed</description>
     <group>iso27001_A_8_5,iso27001_sca,evidence_fail,technical_evidence,</group>
@@ -100,7 +100,7 @@
 
   <rule id="122011" level="3">
     <if_sid>19008</if_sid>
-    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
+    <field name="sca.policy" type="pcre2">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
     <field name="sca.check.id">^2701006$</field>
     <description>ISO/IEC 27001:2022 A.8.5: $(sca.check.title) - passed</description>
     <group>iso27001_A_8_5,iso27001_sca,evidence_pass,technical_evidence,</group>
@@ -109,7 +109,7 @@
 
   <rule id="122012" level="7">
     <if_sid>19007</if_sid>
-    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
+    <field name="sca.policy" type="pcre2">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
     <field name="sca.check.id">^2701007$</field>
     <description>ISO/IEC 27001:2022 A.5.18: $(sca.check.title) - failed</description>
     <group>iso27001_A_5_18,iso27001_sca,evidence_fail,technical_evidence,</group>
@@ -118,7 +118,7 @@
 
   <rule id="122013" level="3">
     <if_sid>19008</if_sid>
-    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
+    <field name="sca.policy" type="pcre2">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
     <field name="sca.check.id">^2701007$</field>
     <description>ISO/IEC 27001:2022 A.5.18: $(sca.check.title) - passed</description>
     <group>iso27001_A_5_18,iso27001_sca,evidence_pass,technical_evidence,</group>
@@ -127,7 +127,7 @@
 
   <rule id="122014" level="7">
     <if_sid>19007</if_sid>
-    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
+    <field name="sca.policy" type="pcre2">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
     <field name="sca.check.id">^2701008$</field>
     <description>ISO/IEC 27001:2022 A.8.2: $(sca.check.title) - failed</description>
     <group>iso27001_A_8_2,iso27001_sca,evidence_fail,technical_evidence,</group>
@@ -136,7 +136,7 @@
 
   <rule id="122015" level="3">
     <if_sid>19008</if_sid>
-    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
+    <field name="sca.policy" type="pcre2">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
     <field name="sca.check.id">^2701008$</field>
     <description>ISO/IEC 27001:2022 A.8.2: $(sca.check.title) - passed</description>
     <group>iso27001_A_8_2,iso27001_sca,evidence_pass,technical_evidence,</group>
@@ -145,7 +145,7 @@
 
   <rule id="122016" level="7">
     <if_sid>19007</if_sid>
-    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
+    <field name="sca.policy" type="pcre2">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
     <field name="sca.check.id">^2701009$</field>
     <description>ISO/IEC 27001:2022 A.8.18: $(sca.check.title) - failed</description>
     <group>iso27001_A_8_18,iso27001_sca,evidence_fail,technical_evidence,</group>
@@ -154,7 +154,7 @@
 
   <rule id="122017" level="3">
     <if_sid>19008</if_sid>
-    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
+    <field name="sca.policy" type="pcre2">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
     <field name="sca.check.id">^2701009$</field>
     <description>ISO/IEC 27001:2022 A.8.18: $(sca.check.title) - passed</description>
     <group>iso27001_A_8_18,iso27001_sca,evidence_pass,technical_evidence,</group>
@@ -163,7 +163,7 @@
 
   <rule id="122018" level="7">
     <if_sid>19007</if_sid>
-    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
+    <field name="sca.policy" type="pcre2">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
     <field name="sca.check.id">^2701010$</field>
     <description>ISO/IEC 27001:2022 A.8.15: $(sca.check.title) - failed</description>
     <group>iso27001_A_8_15,iso27001_sca,evidence_fail,technical_evidence,</group>
@@ -172,7 +172,7 @@
 
   <rule id="122019" level="3">
     <if_sid>19008</if_sid>
-    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
+    <field name="sca.policy" type="pcre2">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
     <field name="sca.check.id">^2701010$</field>
     <description>ISO/IEC 27001:2022 A.8.15: $(sca.check.title) - passed</description>
     <group>iso27001_A_8_15,iso27001_sca,evidence_pass,technical_evidence,</group>
@@ -181,7 +181,7 @@
 
   <rule id="122020" level="7">
     <if_sid>19007</if_sid>
-    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
+    <field name="sca.policy" type="pcre2">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
     <field name="sca.check.id">^2701011$</field>
     <description>ISO/IEC 27001:2022 A.8.15: $(sca.check.title) - failed</description>
     <group>iso27001_A_8_15,iso27001_sca,evidence_fail,technical_evidence,</group>
@@ -190,7 +190,7 @@
 
   <rule id="122021" level="3">
     <if_sid>19008</if_sid>
-    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
+    <field name="sca.policy" type="pcre2">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
     <field name="sca.check.id">^2701011$</field>
     <description>ISO/IEC 27001:2022 A.8.15: $(sca.check.title) - passed</description>
     <group>iso27001_A_8_15,iso27001_sca,evidence_pass,technical_evidence,</group>
@@ -199,7 +199,7 @@
 
   <rule id="122022" level="7">
     <if_sid>19007</if_sid>
-    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
+    <field name="sca.policy" type="pcre2">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
     <field name="sca.check.id">^2701012$</field>
     <description>ISO/IEC 27001:2022 A.8.15: $(sca.check.title) - failed</description>
     <group>iso27001_A_8_15,iso27001_sca,evidence_fail,technical_evidence,</group>
@@ -208,7 +208,7 @@
 
   <rule id="122023" level="3">
     <if_sid>19008</if_sid>
-    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
+    <field name="sca.policy" type="pcre2">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
     <field name="sca.check.id">^2701012$</field>
     <description>ISO/IEC 27001:2022 A.8.15: $(sca.check.title) - passed</description>
     <group>iso27001_A_8_15,iso27001_sca,evidence_pass,technical_evidence,</group>
@@ -217,7 +217,7 @@
 
   <rule id="122024" level="7">
     <if_sid>19007</if_sid>
-    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
+    <field name="sca.policy" type="pcre2">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
     <field name="sca.check.id">^2701013$</field>
     <description>ISO/IEC 27001:2022 A.8.15: $(sca.check.title) - failed</description>
     <group>iso27001_A_8_15,iso27001_sca,evidence_fail,technical_evidence,</group>
@@ -226,7 +226,7 @@
 
   <rule id="122025" level="3">
     <if_sid>19008</if_sid>
-    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
+    <field name="sca.policy" type="pcre2">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
     <field name="sca.check.id">^2701013$</field>
     <description>ISO/IEC 27001:2022 A.8.15: $(sca.check.title) - passed</description>
     <group>iso27001_A_8_15,iso27001_sca,evidence_pass,technical_evidence,</group>
@@ -235,7 +235,7 @@
 
   <rule id="122026" level="7">
     <if_sid>19007</if_sid>
-    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
+    <field name="sca.policy" type="pcre2">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
     <field name="sca.check.id">^2701014$</field>
     <description>ISO/IEC 27001:2022 A.8.16: $(sca.check.title) - failed</description>
     <group>iso27001_A_8_16,iso27001_sca,evidence_fail,technical_evidence,</group>
@@ -244,7 +244,7 @@
 
   <rule id="122027" level="3">
     <if_sid>19008</if_sid>
-    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
+    <field name="sca.policy" type="pcre2">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
     <field name="sca.check.id">^2701014$</field>
     <description>ISO/IEC 27001:2022 A.8.16: $(sca.check.title) - passed</description>
     <group>iso27001_A_8_16,iso27001_sca,evidence_pass,technical_evidence,</group>
@@ -253,7 +253,7 @@
 
   <rule id="122028" level="7">
     <if_sid>19007</if_sid>
-    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
+    <field name="sca.policy" type="pcre2">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
     <field name="sca.check.id">^2701015$</field>
     <description>ISO/IEC 27001:2022 A.8.17: $(sca.check.title) - failed</description>
     <group>iso27001_A_8_17,iso27001_sca,evidence_fail,technical_evidence,</group>
@@ -262,7 +262,7 @@
 
   <rule id="122029" level="3">
     <if_sid>19008</if_sid>
-    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
+    <field name="sca.policy" type="pcre2">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
     <field name="sca.check.id">^2701015$</field>
     <description>ISO/IEC 27001:2022 A.8.17: $(sca.check.title) - passed</description>
     <group>iso27001_A_8_17,iso27001_sca,evidence_pass,technical_evidence,</group>
@@ -271,7 +271,7 @@
 
   <rule id="122030" level="7">
     <if_sid>19007</if_sid>
-    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
+    <field name="sca.policy" type="pcre2">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
     <field name="sca.check.id">^2701016$</field>
     <description>ISO/IEC 27001:2022 A.8.20: $(sca.check.title) - failed</description>
     <group>iso27001_A_8_20,iso27001_sca,evidence_fail,technical_evidence,</group>
@@ -280,7 +280,7 @@
 
   <rule id="122031" level="3">
     <if_sid>19008</if_sid>
-    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
+    <field name="sca.policy" type="pcre2">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
     <field name="sca.check.id">^2701016$</field>
     <description>ISO/IEC 27001:2022 A.8.20: $(sca.check.title) - passed</description>
     <group>iso27001_A_8_20,iso27001_sca,evidence_pass,technical_evidence,</group>
@@ -289,7 +289,7 @@
 
   <rule id="122032" level="7">
     <if_sid>19007</if_sid>
-    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
+    <field name="sca.policy" type="pcre2">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
     <field name="sca.check.id">^2701017$</field>
     <description>ISO/IEC 27001:2022 A.8.22: $(sca.check.title) - failed</description>
     <group>iso27001_A_8_22,iso27001_sca,evidence_fail,technical_evidence,</group>
@@ -298,7 +298,7 @@
 
   <rule id="122033" level="3">
     <if_sid>19008</if_sid>
-    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
+    <field name="sca.policy" type="pcre2">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
     <field name="sca.check.id">^2701017$</field>
     <description>ISO/IEC 27001:2022 A.8.22: $(sca.check.title) - passed</description>
     <group>iso27001_A_8_22,iso27001_sca,evidence_pass,technical_evidence,</group>
@@ -307,7 +307,7 @@
 
   <rule id="122034" level="7">
     <if_sid>19007</if_sid>
-    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
+    <field name="sca.policy" type="pcre2">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
     <field name="sca.check.id">^2701018$</field>
     <description>ISO/IEC 27001:2022 A.8.20: $(sca.check.title) - failed</description>
     <group>iso27001_A_8_20,iso27001_sca,evidence_fail,technical_evidence,</group>
@@ -316,7 +316,7 @@
 
   <rule id="122035" level="3">
     <if_sid>19008</if_sid>
-    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
+    <field name="sca.policy" type="pcre2">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
     <field name="sca.check.id">^2701018$</field>
     <description>ISO/IEC 27001:2022 A.8.20: $(sca.check.title) - passed</description>
     <group>iso27001_A_8_20,iso27001_sca,evidence_pass,technical_evidence,</group>
@@ -325,7 +325,7 @@
 
   <rule id="122036" level="7">
     <if_sid>19007</if_sid>
-    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
+    <field name="sca.policy" type="pcre2">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
     <field name="sca.check.id">^2701019$</field>
     <description>ISO/IEC 27001:2022 A.8.24: $(sca.check.title) - failed</description>
     <group>iso27001_A_8_24,iso27001_sca,evidence_fail,technical_evidence,</group>
@@ -334,7 +334,7 @@
 
   <rule id="122037" level="3">
     <if_sid>19008</if_sid>
-    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
+    <field name="sca.policy" type="pcre2">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
     <field name="sca.check.id">^2701019$</field>
     <description>ISO/IEC 27001:2022 A.8.24: $(sca.check.title) - passed</description>
     <group>iso27001_A_8_24,iso27001_sca,evidence_pass,technical_evidence,</group>
@@ -343,7 +343,7 @@
 
   <rule id="122038" level="7">
     <if_sid>19007</if_sid>
-    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
+    <field name="sca.policy" type="pcre2">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
     <field name="sca.check.id">^2701020$</field>
     <description>ISO/IEC 27001:2022 A.8.24: $(sca.check.title) - failed</description>
     <group>iso27001_A_8_24,iso27001_sca,evidence_fail,technical_evidence,</group>
@@ -352,7 +352,7 @@
 
   <rule id="122039" level="3">
     <if_sid>19008</if_sid>
-    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
+    <field name="sca.policy" type="pcre2">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
     <field name="sca.check.id">^2701020$</field>
     <description>ISO/IEC 27001:2022 A.8.24: $(sca.check.title) - passed</description>
     <group>iso27001_A_8_24,iso27001_sca,evidence_pass,technical_evidence,</group>
@@ -361,7 +361,7 @@
 
   <rule id="122040" level="7">
     <if_sid>19007</if_sid>
-    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
+    <field name="sca.policy" type="pcre2">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
     <field name="sca.check.id">^2701021$</field>
     <description>ISO/IEC 27001:2022 A.8.8: $(sca.check.title) - failed</description>
     <group>iso27001_A_8_8,iso27001_sca,evidence_fail,technical_evidence,</group>
@@ -370,7 +370,7 @@
 
   <rule id="122041" level="3">
     <if_sid>19008</if_sid>
-    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
+    <field name="sca.policy" type="pcre2">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
     <field name="sca.check.id">^2701021$</field>
     <description>ISO/IEC 27001:2022 A.8.8: $(sca.check.title) - passed</description>
     <group>iso27001_A_8_8,iso27001_sca,evidence_pass,technical_evidence,</group>
@@ -379,7 +379,7 @@
 
   <rule id="122042" level="7">
     <if_sid>19007</if_sid>
-    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
+    <field name="sca.policy" type="pcre2">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
     <field name="sca.check.id">^2701022$</field>
     <description>ISO/IEC 27001:2022 A.8.7: $(sca.check.title) - failed</description>
     <group>iso27001_A_8_7,iso27001_sca,evidence_fail,technical_evidence,</group>
@@ -388,7 +388,7 @@
 
   <rule id="122043" level="3">
     <if_sid>19008</if_sid>
-    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
+    <field name="sca.policy" type="pcre2">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
     <field name="sca.check.id">^2701022$</field>
     <description>ISO/IEC 27001:2022 A.8.7: $(sca.check.title) - passed</description>
     <group>iso27001_A_8_7,iso27001_sca,evidence_pass,technical_evidence,</group>
@@ -397,7 +397,7 @@
 
   <rule id="122044" level="7">
     <if_sid>19007</if_sid>
-    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
+    <field name="sca.policy" type="pcre2">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
     <field name="sca.check.id">^2701023$</field>
     <description>ISO/IEC 27001:2022 A.8.12: $(sca.check.title) - failed</description>
     <group>iso27001_A_8_12,iso27001_sca,evidence_fail,technical_evidence,</group>
@@ -406,7 +406,7 @@
 
   <rule id="122045" level="3">
     <if_sid>19008</if_sid>
-    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
+    <field name="sca.policy" type="pcre2">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
     <field name="sca.check.id">^2701023$</field>
     <description>ISO/IEC 27001:2022 A.8.12: $(sca.check.title) - passed</description>
     <group>iso27001_A_8_12,iso27001_sca,evidence_pass,technical_evidence,</group>
@@ -415,7 +415,7 @@
 
   <rule id="122046" level="7">
     <if_sid>19007</if_sid>
-    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
+    <field name="sca.policy" type="pcre2">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
     <field name="sca.check.id">^2701024$</field>
     <description>ISO/IEC 27001:2022 A.7.10: $(sca.check.title) - failed</description>
     <group>iso27001_A_7_10,iso27001_sca,evidence_fail,technical_evidence,</group>
@@ -424,7 +424,7 @@
 
   <rule id="122047" level="3">
     <if_sid>19008</if_sid>
-    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
+    <field name="sca.policy" type="pcre2">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
     <field name="sca.check.id">^2701024$</field>
     <description>ISO/IEC 27001:2022 A.7.10: $(sca.check.title) - passed</description>
     <group>iso27001_A_7_10,iso27001_sca,evidence_pass,technical_evidence,</group>
@@ -433,7 +433,7 @@
 
   <rule id="122048" level="7">
     <if_sid>19007</if_sid>
-    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
+    <field name="sca.policy" type="pcre2">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
     <field name="sca.check.id">^2701025$</field>
     <description>ISO/IEC 27001:2022 A.8.13: $(sca.check.title) - failed</description>
     <group>iso27001_A_8_13,iso27001_sca,evidence_fail,technical_evidence,</group>
@@ -442,7 +442,7 @@
 
   <rule id="122049" level="3">
     <if_sid>19008</if_sid>
-    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
+    <field name="sca.policy" type="pcre2">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
     <field name="sca.check.id">^2701025$</field>
     <description>ISO/IEC 27001:2022 A.8.13: $(sca.check.title) - passed</description>
     <group>iso27001_A_8_13,iso27001_sca,evidence_pass,technical_evidence,</group>
@@ -451,7 +451,7 @@
 
   <rule id="122050" level="7">
     <if_sid>19007</if_sid>
-    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
+    <field name="sca.policy" type="pcre2">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
     <field name="sca.check.id">^2701026$</field>
     <description>ISO/IEC 27001:2022 A.8.6: $(sca.check.title) - failed</description>
     <group>iso27001_A_8_6,iso27001_sca,evidence_fail,technical_evidence,</group>
@@ -460,7 +460,7 @@
 
   <rule id="122051" level="3">
     <if_sid>19008</if_sid>
-    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
+    <field name="sca.policy" type="pcre2">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
     <field name="sca.check.id">^2701026$</field>
     <description>ISO/IEC 27001:2022 A.8.6: $(sca.check.title) - passed</description>
     <group>iso27001_A_8_6,iso27001_sca,evidence_pass,technical_evidence,</group>
@@ -469,7 +469,7 @@
 
   <rule id="122052" level="7">
     <if_sid>19007</if_sid>
-    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
+    <field name="sca.policy" type="pcre2">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
     <field name="sca.check.id">^2701027$</field>
     <description>ISO/IEC 27001:2022 A.8.21: $(sca.check.title) - failed</description>
     <group>iso27001_A_8_21,iso27001_sca,evidence_fail,technical_evidence,</group>
@@ -478,7 +478,7 @@
 
   <rule id="122053" level="3">
     <if_sid>19008</if_sid>
-    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
+    <field name="sca.policy" type="pcre2">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
     <field name="sca.check.id">^2701027$</field>
     <description>ISO/IEC 27001:2022 A.8.21: $(sca.check.title) - passed</description>
     <group>iso27001_A_8_21,iso27001_sca,evidence_pass,technical_evidence,</group>
@@ -487,7 +487,7 @@
 
   <rule id="122054" level="7">
     <if_sid>19007</if_sid>
-    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
+    <field name="sca.policy" type="pcre2">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
     <field name="sca.check.id">^2701028$</field>
     <description>ISO/IEC 27001:2022 A.8.23: $(sca.check.title) - failed</description>
     <group>iso27001_A_8_23,iso27001_sca,evidence_fail,technical_evidence,</group>
@@ -496,7 +496,7 @@
 
   <rule id="122055" level="3">
     <if_sid>19008</if_sid>
-    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
+    <field name="sca.policy" type="pcre2">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
     <field name="sca.check.id">^2701028$</field>
     <description>ISO/IEC 27001:2022 A.8.23: $(sca.check.title) - passed</description>
     <group>iso27001_A_8_23,iso27001_sca,evidence_pass,technical_evidence,</group>
@@ -505,7 +505,7 @@
 
   <rule id="122056" level="7">
     <if_sid>19007</if_sid>
-    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
+    <field name="sca.policy" type="pcre2">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
     <field name="sca.check.id">^2701029$</field>
     <description>ISO/IEC 27001:2022 A.8.26: $(sca.check.title) - failed</description>
     <group>iso27001_A_8_26,iso27001_sca,evidence_fail,technical_evidence,</group>
@@ -514,7 +514,7 @@
 
   <rule id="122057" level="3">
     <if_sid>19008</if_sid>
-    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
+    <field name="sca.policy" type="pcre2">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
     <field name="sca.check.id">^2701029$</field>
     <description>ISO/IEC 27001:2022 A.8.26: $(sca.check.title) - passed</description>
     <group>iso27001_A_8_26,iso27001_sca,evidence_pass,technical_evidence,</group>
@@ -523,7 +523,7 @@
 
   <rule id="122058" level="7">
     <if_sid>19007</if_sid>
-    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
+    <field name="sca.policy" type="pcre2">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
     <field name="sca.check.id">^2701030$</field>
     <description>ISO/IEC 27001:2022 A.8.31: $(sca.check.title) - failed</description>
     <group>iso27001_A_8_31,iso27001_sca,evidence_fail,technical_evidence,</group>
@@ -532,7 +532,7 @@
 
   <rule id="122059" level="3">
     <if_sid>19008</if_sid>
-    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
+    <field name="sca.policy" type="pcre2">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
     <field name="sca.check.id">^2701030$</field>
     <description>ISO/IEC 27001:2022 A.8.31: $(sca.check.title) - passed</description>
     <group>iso27001_A_8_31,iso27001_sca,evidence_pass,technical_evidence,</group>
@@ -541,7 +541,7 @@
 
   <rule id="122060" level="7">
     <if_sid>19007</if_sid>
-    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
+    <field name="sca.policy" type="pcre2">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
     <field name="sca.check.id">^2701031$</field>
     <description>ISO/IEC 27001:2022 A.8.32: $(sca.check.title) - failed</description>
     <group>iso27001_A_8_32,iso27001_sca,evidence_fail,technical_evidence,</group>
@@ -550,7 +550,7 @@
 
   <rule id="122061" level="3">
     <if_sid>19008</if_sid>
-    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
+    <field name="sca.policy" type="pcre2">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
     <field name="sca.check.id">^2701031$</field>
     <description>ISO/IEC 27001:2022 A.8.32: $(sca.check.title) - passed</description>
     <group>iso27001_A_8_32,iso27001_sca,evidence_pass,technical_evidence,</group>
@@ -559,7 +559,7 @@
 
   <rule id="122062" level="7">
     <if_sid>19007</if_sid>
-    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
+    <field name="sca.policy" type="pcre2">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
     <field name="sca.check.id">^2701032$</field>
     <description>ISO/IEC 27001:2022 A.8.32: $(sca.check.title) - failed</description>
     <group>iso27001_A_8_32,iso27001_sca,evidence_fail,technical_evidence,</group>
@@ -568,7 +568,7 @@
 
   <rule id="122063" level="3">
     <if_sid>19008</if_sid>
-    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
+    <field name="sca.policy" type="pcre2">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
     <field name="sca.check.id">^2701032$</field>
     <description>ISO/IEC 27001:2022 A.8.32: $(sca.check.title) - passed</description>
     <group>iso27001_A_8_32,iso27001_sca,evidence_pass,technical_evidence,</group>
@@ -577,7 +577,7 @@
 
   <rule id="122064" level="7">
     <if_sid>19007</if_sid>
-    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
+    <field name="sca.policy" type="pcre2">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
     <field name="sca.check.id">^2701033$</field>
     <description>ISO/IEC 27001:2022 A.8.34: $(sca.check.title) - failed</description>
     <group>iso27001_A_8_34,iso27001_sca,evidence_fail,technical_evidence,</group>
@@ -586,7 +586,7 @@
 
   <rule id="122065" level="3">
     <if_sid>19008</if_sid>
-    <field name="sca.policy">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
+    <field name="sca.policy" type="pcre2">^ISO/IEC\ 27001:2022\ Linux\ Endpoint\ Evidence$</field>
     <field name="sca.check.id">^2701033$</field>
     <description>ISO/IEC 27001:2022 A.8.34: $(sca.check.title) - passed</description>
     <group>iso27001_A_8_34,iso27001_sca,evidence_pass,technical_evidence,</group>
