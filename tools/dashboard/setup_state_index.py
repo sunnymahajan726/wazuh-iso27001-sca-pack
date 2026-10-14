@@ -7,7 +7,7 @@ Env: WAZUH_INDEXER_URL (default https://127.0.0.1:9200)
 Creates the indexer role iso27001_state_writer (write access to
 wazuh-iso27001-state* only), the internal user iso27001-sync with a random
 password written to /etc/wazuh-iso27001-sync.conf (mode 600), and the
-wazuh-iso27001-state index. Re-running rotates the sync user's password.
+wazuh-iso27001-state and wazuh-iso27001-state-history indices. Re-running rotates the sync user's password.
 """
 import base64, json, os, secrets, ssl, sys, urllib.error, urllib.request
 
@@ -56,7 +56,16 @@ print("index", call("PUT", "/" + INDEX, {
         "policy": {"properties": {"id": kw, "name": kw, "score": {"type": "integer"},
                                   "scan_end": {"type": "date", "format": "epoch_second"}}},
         "check": {"properties": {"id": kw, "title": kw, "result": kw,
-                                 "reason": {"type": "text"}, "remediation": {"type": "text"}}},
+                                 "reason": {"type": "text"}, "remediation": {"type": "text"},
+                                 "basis": {"type": "text"}, "rule": {"type": "text"}}},
         "control": kw, "synced_at": {"type": "date"}}}},
+    cred=f"iso27001-sync:{password}"))
+print("history index", call("PUT", "/" + INDEX + "-history", {
+    "settings": {"number_of_shards": 1, "number_of_replicas": 0},
+    "mappings": {"properties": {
+        "agent": {"properties": {"id": kw, "name": kw, "os": kw, "status": kw}},
+        "policy": {"properties": {"id": kw, "name": kw}},
+        "check": {"properties": {"id": kw, "title": kw}},
+        "control": kw, "from": kw, "to": kw, "changed_at": {"type": "date"}, "source": kw}}},
     cred=f"iso27001-sync:{password}"))
 print(f"sync credentials written to {CONF}")

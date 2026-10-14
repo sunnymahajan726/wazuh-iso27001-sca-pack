@@ -20,6 +20,7 @@ AUTH = "Basic " + base64.b64encode(CRED.encode()).decode()
 
 ISO = "rule.groups:iso27001_sca"
 STATE_IP = "wazuh-iso27001-state"
+HISTORY_IP = "wazuh-iso27001-state-history"
 SUMMARY = "data.sca.type:summary and data.sca.policy:ISO*"
 
 
@@ -100,11 +101,13 @@ COUNT = {"id": "1", "enabled": True, "type": "count", "schema": "metric", "param
 INTRO = """### ISO/IEC 27001:2022 technical evidence
 Results from the **wazuh-iso27001-sca-pack** SCA policies (Linux and Windows), mapped to Annex A controls.
 
-* **Current status** panels (failing checks, control status, failures by control) read `wazuh-iso27001-state`, which is refreshed from the Wazuh manager every 15 minutes and matches *Endpoint security → Configuration Assessment*. They ignore the time picker.
+* **How each check is tested** shows what every check looks at, when it passes, and the exact rule Wazuh runs.\n* **Control changes** lists every result change per control (e.g. failed → passed) with its scan time; it follows the time picker.\n* **Current status** panels (failing checks, control status, failures by control) read `wazuh-iso27001-state`, which is refreshed from the Wazuh manager every 15 minutes and matches *Endpoint security → Configuration Assessment*. They ignore the time picker.
 * **Score** and **trend** panels read the alert history and follow the time picker.
 * SCA results are technical evidence, **not certification**. Governance controls are listed in `UNMAPPED-GOVERNANCE-CONTROLS.md`."""
 
 objs = [
+    {"type": "index-pattern", "id": HISTORY_IP,
+     "attributes": {"title": HISTORY_IP + "*", "timeFieldName": "changed_at"}, "references": []},
     {"type": "index-pattern", "id": STATE_IP,
      "attributes": {"title": STATE_IP + "*"}, "references": []},
     vis("iso27001-intro", "ISO 27001 - About", "markdown",
@@ -135,6 +138,13 @@ objs = [
          terms("3", "agent.name", "bucket", label="Agent"),
          terms("4", "check.title", "bucket", size=100, label="Check")],
         query="", ip=STATE_IP),
+    vis("iso27001-check-basis", "ISO 27001 - How each check is tested", "table", TABLE,
+        [latest("1", "check.basis", "Basis (what is checked, when it passes)", sort="synced_at"),
+         latest("5", "check.rule", "Exact Wazuh rule", sort="synced_at"),
+         terms("2", "control", "bucket", size=60, label="Annex A control"),
+         terms("3", "policy.name", "bucket", label="Policy"),
+         terms("4", "check.title", "bucket", size=100, label="Check")],
+        query="", ip=STATE_IP),
     vis("iso27001-fail-by-control", "ISO 27001 - Currently failing checks by control", "horizontal_bar",
         xy("histogram", horizontal=True, mode="stacked", ytitle="Failing checks"),
         [dict(COUNT, params={"customLabel": "Failing checks"}),
@@ -151,6 +161,12 @@ objs = [
               {"input": {"query": "rule.groups:evidence_pass", "language": "kuery"}, "label": "Passed"},
               {"input": {"query": "rule.groups:evidence_fail", "language": "kuery"}, "label": "Failed"}]}}],
         query=ISO),
+    {"type": "search", "id": "iso27001-changes",
+     "attributes": {"title": "ISO 27001 - Control changes (failed / passed)", "description": "", "version": 1,
+                    "columns": ["agent.name", "control", "check.title", "from", "to"],
+                    "sort": [["changed_at", "desc"]],
+                    "kibanaSavedObjectMeta": source("")},
+     "references": [dict(IDX_REF[0], id=HISTORY_IP)]},
     {"type": "search", "id": "iso27001-events",
      "attributes": {"title": "ISO 27001 - Evidence events", "description": "", "version": 1,
                     "columns": ["agent.name", "data.sca.check.compliance.iso_27001_2022",
@@ -165,10 +181,12 @@ layout = [("iso27001-intro", "visualization", 0, 0, 48, 8),
           ("iso27001-score-latest", "visualization", 0, 8, 20, 12),
           ("iso27001-score-trend", "visualization", 20, 8, 28, 12),
           ("iso27001-failing-now", "visualization", 0, 20, 48, 16),
-          ("iso27001-control-matrix", "visualization", 0, 36, 48, 24),
-          ("iso27001-fail-by-control", "visualization", 0, 60, 24, 16),
-          ("iso27001-pass-fail-trend", "visualization", 24, 60, 24, 16),
-          ("iso27001-events", "search", 0, 76, 48, 16)]
+          ("iso27001-changes", "search", 0, 36, 48, 16),
+          ("iso27001-control-matrix", "visualization", 0, 52, 48, 24),
+          ("iso27001-check-basis", "visualization", 0, 76, 48, 24),
+          ("iso27001-fail-by-control", "visualization", 0, 100, 24, 16),
+          ("iso27001-pass-fail-trend", "visualization", 24, 100, 24, 16),
+          ("iso27001-events", "search", 0, 116, 48, 16)]
 panels, refs = [], []
 for n, (oid, otype, x, y, w, h) in enumerate(layout):
     pid = str(n + 1)
@@ -188,9 +206,10 @@ objs.append({"type": "dashboard", "id": "iso27001-evidence",
              "references": refs})
 
 # Store the state index's field list so its panels can aggregate immediately.
-fields = api("GET", "/api/index_patterns/_fields_for_wildcard?pattern=" + STATE_IP + "*"
-             "&meta_fields=_source&meta_fields=_id&meta_fields=_type&meta_fields=_index&meta_fields=_score")["fields"]
-objs[0]["attributes"]["fields"] = json.dumps(fields)
+for o in objs[:2]:
+    fields = api("GET", "/api/index_patterns/_fields_for_wildcard?pattern=" + o["attributes"]["title"] +
+                 "&meta_fields=_source&meta_fields=_id&meta_fields=_type&meta_fields=_index&meta_fields=_score")["fields"]
+    o["attributes"]["fields"] = json.dumps(fields)
 
 res = api("POST", "/api/saved_objects/_bulk_create?overwrite=true", objs)
 bad = [o for o in res["saved_objects"] if "error" in o]

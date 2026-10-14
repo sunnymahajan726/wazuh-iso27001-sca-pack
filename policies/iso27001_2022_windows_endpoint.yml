@@ -9,7 +9,7 @@ policy:
 checks:
 - id: 2702001
   title: A.5.9 - Wazuh agent service is installed
-  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.5.9.
+  description: Looks for the WazuhSvc service in the registry. Passes when the Wazuh agent service is installed.
   rationale: This check provides evidence relevant to Asset inventory; it does not prove full control implementation.
   remediation: Install and enroll the Wazuh agent.
   compliance:
@@ -22,7 +22,7 @@ checks:
   - r:HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\WazuhSvc
 - id: 2702002
   title: A.5.16 - Guest account is disabled
-  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.5.16.
+  description: Finds the built-in Guest account (SID ending -501). Passes when it is disabled.
   rationale: This check provides evidence relevant to Identity management; it does not prove full control implementation.
   remediation: Disable Guest.
   compliance:
@@ -35,7 +35,7 @@ checks:
   - c:powershell -NoProfile -Command "[bool](Get-CimInstance -Query 'SELECT * FROM Win32_UserAccount WHERE LocalAccount = TRUE AND SID LIKE ''S-1-5-21-%-501''' | Where-Object -Property Disabled)" -> r:^True$
 - id: 2702003
   title: A.8.2 - Built-in Administrator is disabled or renamed
-  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.2.
+  description: Finds the built-in Administrator account (SID ending -500). Passes when it is disabled or renamed.
   rationale: This check provides evidence relevant to Privileged access rights; it does not prove full control implementation.
   remediation: Disable or rename the built-in Administrator.
   compliance:
@@ -48,7 +48,7 @@ checks:
   - c:powershell -NoProfile -Command "$u=Get-CimInstance -Query 'SELECT * FROM Win32_UserAccount WHERE LocalAccount = TRUE AND SID LIKE ''S-1-5-21-%-500'''; if($u.Disabled -or ($u.Name -ne 'Administrator')){'Compliant'}else{'NonCompliant'}" -> r:^Compliant$
 - id: 2702004
   title: A.5.17 - Blank-password network logons are restricted
-  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.5.17.
+  description: Reads registry Lsa\LimitBlankPasswordUse. Passes when it is 1 (accounts with blank passwords can't log on over the network).
   rationale: This check provides evidence relevant to Authentication information; it does not prove full control implementation.
   remediation: Restrict blank-password logons.
   compliance:
@@ -61,7 +61,7 @@ checks:
   - r:HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Lsa -> LimitBlankPasswordUse -> 1
 - id: 2702005
   title: A.8.5 - Last signed-in user is hidden
-  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.5.
+  description: Reads registry Policies\System\DontDisplayLastUserName. Passes when it is 1.
   rationale: This check provides evidence relevant to Secure authentication; it does not prove full control implementation.
   remediation: Hide the last signed-in user.
   compliance:
@@ -74,7 +74,7 @@ checks:
   - r:HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System -> DontDisplayLastUserName -> 1
 - id: 2702006
   title: A.8.5 - Secure attention sequence is required
-  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.5.
+  description: Reads registry Policies\System\DisableCAD. Passes when it is 0 (Ctrl+Alt+Del required). Fails if the setting is missing.
   rationale: This check provides evidence relevant to Secure authentication; it does not prove full control implementation.
   remediation: Require CTRL+ALT+DEL.
   compliance:
@@ -87,7 +87,7 @@ checks:
   - c:powershell -NoProfile -Command "$k=[Microsoft.Win32.RegistryKey]::OpenBaseKey('LocalMachine','Registry64').OpenSubKey('Software\Microsoft\Windows\CurrentVersion\Policies\System'); $v=if($k){$k.GetValue('DisableCAD')}; if(($null -ne $v) -and ($v -eq 0)){'Set'}else{'NotSet'}" -> r:^Set$
 - id: 2702007
   title: A.8.5 - Minimum password length is at least 14
-  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.5.
+  description: Runs 'net accounts'. Passes when the minimum password length is 14 or more.
   rationale: This check provides evidence relevant to Secure authentication; it does not prove full control implementation.
   remediation: Set minimum password length to at least 14.
   compliance:
@@ -100,7 +100,7 @@ checks:
   - c:net accounts -> n:^Minimum password length:\s+(\d+) compare >= 14
 - id: 2702008
   title: A.5.17 - Credential storage is disabled
-  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.5.17.
+  description: Reads registry Lsa\DisableDomainCreds. Passes when it is 1 (Windows doesn't store network passwords).
   rationale: This check provides evidence relevant to Authentication information; it does not prove full control implementation.
   remediation: Disable stored network credentials.
   compliance:
@@ -113,7 +113,7 @@ checks:
   - r:HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Lsa -> DisableDomainCreds -> 1
 - id: 2702009
   title: A.5.17 - LM hashes are not stored
-  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.5.17.
+  description: Reads registry Lsa\NoLMHash. Passes when it is 1 (weak LM password hashes aren't stored).
   rationale: This check provides evidence relevant to Authentication information; it does not prove full control implementation.
   remediation: Disable LM hash storage.
   compliance:
@@ -126,7 +126,7 @@ checks:
   - r:HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Lsa -> NoLMHash -> 1
 - id: 2702010
   title: A.8.7 - Defender real-time protection is enabled
-  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.7.
+  description: Asks Microsoft Defender for its status. Passes when real-time protection is on.
   rationale: This check provides evidence relevant to Protection against malware; it does not prove full control implementation.
   remediation: Enable approved endpoint protection.
   compliance:
@@ -139,7 +139,7 @@ checks:
   - c:powershell -NoProfile -Command "(Get-MpComputerStatus).RealTimeProtectionEnabled" -> r:^True$
 - id: 2702011
   title: A.8.8 - Windows Update is enabled
-  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.8.
+  description: Reads the Windows Update service (wuauserv) startup type. Passes when it is Automatic or Manual, not Disabled.
   rationale: This check provides evidence relevant to Management of technical vulnerabilities; it does not prove full control implementation.
   remediation: Enable Windows Update.
   compliance:
@@ -152,7 +152,7 @@ checks:
   - c:powershell -NoProfile -Command "(Get-Service wuauserv).StartType" -> r:^Automatic$|^Manual$
 - id: 2702012
   title: A.8.20 - Firewall is enabled for all profiles
-  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.20.
+  description: Reads the firewall profiles actually in effect. Passes when Domain, Private and Public are all enabled.
   rationale: This check provides evidence relevant to Networks security; it does not prove full control implementation.
   remediation: Enable all firewall profiles.
   compliance:
@@ -165,7 +165,7 @@ checks:
   - c:powershell -NoProfile -Command "@(Get-NetFirewallProfile -PolicyStore ActiveStore | Where-Object {$_.Enabled -ne 'True'}).Count" -> r:^0$
 - id: 2702013
   title: A.8.20 - Inbound firewall defaults to block
-  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.20.
+  description: Reads the firewall profiles actually in effect. Passes when every profile blocks inbound traffic by default.
   rationale: This check provides evidence relevant to Networks security; it does not prove full control implementation.
   remediation: Set inbound default to Block.
   compliance:
@@ -178,7 +178,7 @@ checks:
   - c:powershell -NoProfile -Command "@(Get-NetFirewallProfile -PolicyStore ActiveStore | Where-Object {$_.DefaultInboundAction -ne 'Block'}).Count" -> r:^0$
 - id: 2702014
   title: A.8.21 - SMBv1 is disabled
-  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.21.
+  description: Asks the SMB server whether SMBv1 is enabled. Passes when it is off.
   rationale: This check provides evidence relevant to Security of network services; it does not prove full control implementation.
   remediation: Disable SMBv1.
   compliance:
@@ -191,7 +191,7 @@ checks:
   - c:powershell -NoProfile -Command "(Get-SmbServerConfiguration).EnableSMB1Protocol" -> r:^False$
 - id: 2702015
   title: A.8.24 - SMB server signing is required
-  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.24.
+  description: Reads registry LanmanServer\Parameters\RequireSecuritySignature. Passes when it is 1. Fails if the setting is missing.
   rationale: This check provides evidence relevant to Use of cryptography; it does not prove full control implementation.
   remediation: Require SMB server signing.
   compliance:
@@ -204,7 +204,7 @@ checks:
   - c:powershell -NoProfile -Command "$k=[Microsoft.Win32.RegistryKey]::OpenBaseKey('LocalMachine','Registry64').OpenSubKey('System\CurrentControlSet\Services\LanmanServer\Parameters'); $v=if($k){$k.GetValue('RequireSecuritySignature')}; if(($null -ne $v) -and ($v -eq 1)){'Set'}else{'NotSet'}" -> r:^Set$
 - id: 2702016
   title: A.8.24 - BitLocker protects the OS volume
-  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.24.
+  description: Queries disk encryption on the system drive. Passes when BitLocker or device encryption protection is on.
   rationale: This check provides evidence relevant to Use of cryptography; it does not prove full control implementation.
   remediation: Enable BitLocker.
   compliance:
@@ -217,7 +217,7 @@ checks:
   - c:powershell -NoProfile -Command "(Get-CimInstance -Namespace root/CIMV2/Security/MicrosoftVolumeEncryption -ClassName Win32_EncryptableVolume | Where-Object {$_.DriveLetter -eq $env:SystemDrive}).ProtectionStatus" -> r:^1$
 - id: 2702017
   title: A.8.15 - Security log is at least 1 GB
-  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.15.
+  description: Reads the Security event log's maximum size. Passes when it is 1024 MB or more.
   rationale: This check provides evidence relevant to Logging; it does not prove full control implementation.
   remediation: Increase Security log capacity.
   compliance:
@@ -230,7 +230,7 @@ checks:
   - c:powershell -NoProfile -Command "[math]::Floor((Get-WinEvent -ListLog Security).MaximumSizeInBytes / 1MB)" -> n:^(\d+) compare >= 1024
 - id: 2702018
   title: A.8.15 - Logon auditing records success and failure
-  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.15.
+  description: Runs auditpol for the Logon subcategory. Passes when both Success and Failure are audited.
   rationale: This check provides evidence relevant to Logging; it does not prove full control implementation.
   remediation: Enable logon auditing.
   compliance:
@@ -243,7 +243,7 @@ checks:
   - c:auditpol.exe /get /subcategory:"Logon" -> r:Success and Failure
 - id: 2702019
   title: A.8.16 - PowerShell script-block logging is enabled
-  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.16.
+  description: Reads registry PowerShell\ScriptBlockLogging\EnableScriptBlockLogging. Passes when it is 1. Fails if the setting is missing.
   rationale: This check provides evidence relevant to Monitoring activities; it does not prove full control implementation.
   remediation: Enable script-block logging.
   compliance:
@@ -256,7 +256,7 @@ checks:
   - c:powershell -NoProfile -Command "$k=[Microsoft.Win32.RegistryKey]::OpenBaseKey('LocalMachine','Registry64').OpenSubKey('Software\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging'); $v=if($k){$k.GetValue('EnableScriptBlockLogging')}; if(($null -ne $v) -and ($v -eq 1)){'Set'}else{'NotSet'}" -> r:^Set$
 - id: 2702020
   title: A.8.17 - Windows Time is running
-  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.17.
+  description: Checks the Windows Time service (W32Time). Passes when it is running.
   rationale: This check provides evidence relevant to Clock synchronization; it does not prove full control implementation.
   remediation: Start Windows Time.
   compliance:
@@ -269,7 +269,7 @@ checks:
   - c:powershell -NoProfile -Command "(Get-Service W32Time).Status" -> r:^Running$
 - id: 2702021
   title: A.8.5 - RDP requires NLA
-  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.5.
+  description: Reads registry RDP-Tcp\UserAuthentication. Passes when it is 1 (Network Level Authentication required).
   rationale: This check provides evidence relevant to Secure authentication; it does not prove full control implementation.
   remediation: Require NLA.
   compliance:
@@ -282,7 +282,7 @@ checks:
   - r:HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp -> UserAuthentication -> 1
 - id: 2702022
   title: A.8.3 - Anonymous SAM enumeration is restricted
-  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.3.
+  description: Reads registry Lsa\RestrictAnonymousSAM. Passes when it is 1 (anonymous users can't list accounts).
   rationale: This check provides evidence relevant to Information access restriction; it does not prove full control implementation.
   remediation: Restrict anonymous enumeration.
   compliance:
@@ -295,7 +295,7 @@ checks:
   - r:HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Lsa -> RestrictAnonymousSAM -> 1
 - id: 2702023
   title: A.7.10 - AutoRun is disabled
-  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.7.10.
+  description: Reads registry Policies\Explorer\NoDriveTypeAutoRun. Passes when it is 255 (AutoRun off for all drives). Fails if the setting is missing.
   rationale: This check provides evidence relevant to Storage media; it does not prove full control implementation.
   remediation: Disable AutoRun.
   compliance:
@@ -308,7 +308,7 @@ checks:
   - c:powershell -NoProfile -Command "$k=[Microsoft.Win32.RegistryKey]::OpenBaseKey('LocalMachine','Registry64').OpenSubKey('Software\Microsoft\Windows\CurrentVersion\Policies\Explorer'); $v=if($k){$k.GetValue('NoDriveTypeAutoRun')}; if(($null -ne $v) -and ($v -eq 255)){'Set'}else{'NotSet'}" -> r:^Set$
 - id: 2702024
   title: A.8.13 - Backup service is active
-  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.13.
+  description: Checks Windows Server Backup (wbengine) and Veeam Agent. Passes when either is running.
   rationale: This check provides evidence relevant to Information backup; it does not prove full control implementation.
   remediation: Enable approved backups.
   compliance:
@@ -321,7 +321,7 @@ checks:
   - c:powershell -NoProfile -Command "$s=Get-Service -Name wbengine,VeeamEndpointBackupSvc -ErrorAction SilentlyContinue | Where-Object {$_.Status -eq 'Running'}; if($s){'active'}else{'inactive'}" -> r:^active$
 - id: 2702025
   title: A.8.6 - System drive has at least 10 percent free
-  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.6.
+  description: Measures free space on the system drive. Passes when it is 10% or more.
   rationale: This check provides evidence relevant to Capacity management; it does not prove full control implementation.
   remediation: Restore capacity.
   compliance:
@@ -334,7 +334,7 @@ checks:
   - c:powershell -NoProfile -Command "$d=Get-CimInstance Win32_LogicalDisk | Where-Object {$_.DeviceID -eq $env:SystemDrive}; [math]::Floor($d.FreeSpace * 100 / $d.Size)" -> n:^(\d+) compare >= 10
 - id: 2702026
   title: A.8.18 - Remote Registry is disabled
-  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.18.
+  description: Reads the Remote Registry service startup type. Passes when it is Disabled.
   rationale: This check provides evidence relevant to Use of privileged utility programs; it does not prove full control implementation.
   remediation: Disable Remote Registry.
   compliance:
@@ -347,7 +347,7 @@ checks:
   - c:powershell -NoProfile -Command "(Get-Service RemoteRegistry).StartType" -> r:^Disabled$
 - id: 2702027
   title: A.8.31 - Developer Mode is disabled
-  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.31.
+  description: Reads registry AppModelUnlock\AllowDevelopmentWithoutDevLicense. Passes unless it is 1 (Developer Mode on).
   rationale: This check provides evidence relevant to Separation of development, test and production environments; it does not prove full control implementation.
   remediation: Disable Developer Mode.
   compliance:
@@ -360,7 +360,7 @@ checks:
   - c:powershell -NoProfile -Command "$k=[Microsoft.Win32.RegistryKey]::OpenBaseKey('LocalMachine','Registry64').OpenSubKey('Software\Microsoft\Windows\CurrentVersion\AppModelUnlock'); $v=if($k){$k.GetValue('AllowDevelopmentWithoutDevLicense')}; if(($null -ne $v) -and ($v -eq 1)){'Enabled'}else{'Disabled'}" -> r:^Disabled$
 - id: 2702028
   title: A.8.19 - AlwaysInstallElevated is disabled
-  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.19.
+  description: Reads registry Policies\Microsoft\Windows\Installer\AlwaysInstallElevated. Passes unless it is 1.
   rationale: This check provides evidence relevant to Installation of software on operational systems; it does not prove full control implementation.
   remediation: Disable AlwaysInstallElevated.
   compliance:
@@ -373,7 +373,7 @@ checks:
   - c:powershell -NoProfile -Command "$k=[Microsoft.Win32.RegistryKey]::OpenBaseKey('LocalMachine','Registry64').OpenSubKey('Software\Policies\Microsoft\Windows\Installer'); $v=if($k){$k.GetValue('AlwaysInstallElevated')}; if(($null -ne $v) -and ($v -eq 1)){'Enabled'}else{'Disabled'}" -> r:^Disabled$
 - id: 2702029
   title: A.8.32 - Wazuh FIM is configured
-  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.32.
+  description: Searches the Wazuh agent's ossec.conf for a <syscheck> section. Passes when file integrity monitoring is configured.
   rationale: This check provides evidence relevant to Change management; it does not prove full control implementation.
   remediation: Enable FIM.
   compliance:
@@ -386,7 +386,7 @@ checks:
   - f:C:\Program Files (x86)\ossec-agent\ossec.conf -> r:<syscheck>
 - id: 2702030
   title: A.8.23 - Edge SmartScreen is enabled
-  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.23.
+  description: Reads registry Policies\Microsoft\Edge\SmartScreenEnabled. Passes when it is 1. Fails if the setting is missing.
   rationale: This check provides evidence relevant to Web filtering; it does not prove full control implementation.
   remediation: Enable enterprise web filtering.
   compliance:
@@ -399,7 +399,7 @@ checks:
   - c:powershell -NoProfile -Command "$k=[Microsoft.Win32.RegistryKey]::OpenBaseKey('LocalMachine','Registry64').OpenSubKey('Software\Policies\Microsoft\Edge'); $v=if($k){$k.GetValue('SmartScreenEnabled')}; if(($null -ne $v) -and ($v -eq 1)){'Set'}else{'NotSet'}" -> r:^Set$
 - id: 2702031
   title: A.8.34 - Audit-policy changes are recorded
-  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.34.
+  description: Runs auditpol for the Audit Policy Change subcategory. Passes when Success is audited.
   rationale: This check provides evidence relevant to Protection during audit testing; it does not prove full control implementation.
   remediation: Audit policy changes.
   compliance:

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Copy current ISO 27001 SCA check results from wazuh-db into the
-wazuh-iso27001-state index, one document per agent+check.
+wazuh-iso27001-state index, one document per agent+check, and record every
+result change (e.g. failed -> passed) in wazuh-iso27001-state-history.
 
 SCA only raises alerts for some result changes (results that arrive via
 integrity sync update wazuh-db silently), so alerts can't show current state.
@@ -13,6 +14,7 @@ from datetime import datetime, timezone
 
 INDEXER = "https://127.0.0.1:9200"
 INDEX = "wazuh-iso27001-state"
+HISTORY = INDEX + "-history"
 DB_DIR = "/var/ossec/queue/db"
 POLICY_PREFIX = "iso27001_"
 
@@ -44,7 +46,15 @@ def query(db, sql, args=()):
             time.sleep(2)
 
 
+def previous_results():
+    res = es("POST", f"/{INDEX}/_search", {"size": 10000, "_source": ["check.result"],
+                                           "query": {"match_all": {}}})
+    return {h["_id"]: h["_source"]["check"]["result"] for h in res["hits"]["hits"]}
+
+
 now = datetime.now(timezone.utc).isoformat()
+previous = previous_results()
+changes = 0
 agents = query(f"{DB_DIR}/global.db",
                "SELECT id, name, os_name, connection_status FROM agent")
 lines, count = [], 0
@@ -64,16 +74,33 @@ for aid, name, os_name, status in agents:
                                        JOIN sca_check_compliance cc ON cc.id_check = c.id
                                        WHERE c.policy_id = ? AND cc.key = 'iso_27001_2022'""", (pid,)):
             controls.setdefault(cid, []).append(value)
-        for cid, title, result, reason, remediation in query(
-                db, "SELECT id, title, result, reason, remediation FROM sca_check WHERE policy_id = ?", (pid,)):
+        rules = {}
+        for cid, rule in query(db, """SELECT r.id_check, r.rule FROM sca_check_rules r
+                                     JOIN sca_check c ON c.id = r.id_check WHERE c.policy_id = ?""", (pid,)):
+            rules.setdefault(cid, []).append(rule)
+        for cid, title, result, reason, remediation, description in query(
+                db, "SELECT id, title, result, reason, remediation, description FROM sca_check WHERE policy_id = ?",
+                (pid,)):
             doc = {"agent": {"id": f"{int(aid):03d}", "name": name, "os": os_name, "status": status},
                    "policy": {"id": pid, "name": pname, "score": score, "scan_end": end_scan},
                    "check": {"id": str(cid), "title": title, "result": result or "not applicable",
-                             "reason": reason or "", "remediation": remediation or ""},
+                             "reason": reason or "", "remediation": remediation or "",
+                             "basis": description or "", "rule": rules.get(cid, [])},
                    "control": controls.get(cid, []), "synced_at": now}
-            lines.append(json.dumps({"index": {"_index": INDEX, "_id": f"{int(aid):03d}_{cid}"}}))
+            doc_id = f"{int(aid):03d}_{cid}"
+            lines.append(json.dumps({"index": {"_index": INDEX, "_id": doc_id}}))
             lines.append(json.dumps(doc))
             count += 1
+            before = previous.get(doc_id)
+            if before is not None and before != doc["check"]["result"]:
+                changed_at = datetime.fromtimestamp(end_scan, timezone.utc).isoformat()
+                lines.append(json.dumps({"index": {"_index": HISTORY, "_id": f"{doc_id}_{end_scan}"}}))
+                lines.append(json.dumps({"agent": doc["agent"], "policy": {"id": pid, "name": pname},
+                                         "check": {"id": str(cid), "title": title},
+                                         "control": doc["control"], "from": before,
+                                         "to": doc["check"]["result"], "changed_at": changed_at,
+                                         "source": "sync"}))
+                changes += 1
 
 if lines:
     res = es("POST", "/_bulk?refresh=true", "\n".join(lines) + "\n", ndjson=True)
@@ -83,4 +110,4 @@ if lines:
 # Drop checks/agents/policies that no longer exist in wazuh-db.
 gone = es("POST", f"/{INDEX}/_delete_by_query?refresh=true",
           {"query": {"range": {"synced_at": {"lt": now}}}})["deleted"]
-print(f"{now} synced {count} checks, removed {gone} stale")
+print(f"{now} synced {count} checks, {changes} changed, removed {gone} stale")

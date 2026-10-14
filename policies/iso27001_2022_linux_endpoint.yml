@@ -9,7 +9,7 @@ policy:
 checks:
 - id: 2701001
   title: A.5.9 - Wazuh agent is installed
-  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.5.9.
+  description: Looks for the /var/ossec directory. Passes when the Wazuh agent is installed.
   rationale: This check provides evidence relevant to Asset inventory; it does not prove full control implementation.
   remediation: Install and enroll the Wazuh agent.
   compliance:
@@ -22,7 +22,7 @@ checks:
   - d:/var/ossec
 - id: 2701002
   title: A.8.2 - No UID 0 accounts other than root
-  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.2.
+  description: Reads /etc/passwd for accounts with UID 0. Passes when root is the only one.
   rationale: This check provides evidence relevant to Privileged access rights; it does not prove full control implementation.
   remediation: Remove UID 0 from all accounts except root.
   compliance:
@@ -35,7 +35,7 @@ checks:
   - 'c:sh -c "exec 2>/dev/null; awk -F: -v r=root ''$3==0 && $1!=r'' /etc/passwd | grep -q . && echo FOUND || echo NONE" -> r:^NONE$'
 - id: 2701003
   title: A.8.2 - Root SSH login is disabled
-  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.2.
+  description: Reads the effective SSH server settings (sshd -T). Passes when PermitRootLogin is 'no' or 'prohibit-password' (keys only).
   rationale: This check provides evidence relevant to Privileged access rights; it does not prove full control implementation.
   remediation: Disable direct root SSH login.
   compliance:
@@ -48,7 +48,7 @@ checks:
   - c:sh -c "exec 2>/dev/null; sshd -T | tr A-Z a-z | grep '^permitrootlogin '" -> r:^permitrootlogin no$|^permitrootlogin prohibit-password$
 - id: 2701004
   title: A.8.5 - SSH password authentication is disabled
-  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.5.
+  description: Reads the effective SSH server settings (sshd -T). Passes when PasswordAuthentication is 'no'.
   rationale: This check provides evidence relevant to Secure authentication; it does not prove full control implementation.
   remediation: Use approved key or federated authentication.
   compliance:
@@ -61,7 +61,7 @@ checks:
   - c:sh -c "exec 2>/dev/null; sshd -T | tr A-Z a-z | grep '^passwordauthentication '" -> r:^passwordauthentication no$
 - id: 2701005
   title: A.5.17 - SSH empty passwords are disabled
-  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.5.17.
+  description: Reads the effective SSH server settings (sshd -T). Passes when PermitEmptyPasswords is 'no'.
   rationale: This check provides evidence relevant to Authentication information; it does not prove full control implementation.
   remediation: Disable empty passwords.
   compliance:
@@ -74,7 +74,7 @@ checks:
   - c:sh -c "exec 2>/dev/null; sshd -T | tr A-Z a-z | grep '^permitemptypasswords '" -> r:^permitemptypasswords no$
 - id: 2701006
   title: A.8.5 - PAM password quality is configured
-  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.5.
+  description: Searches /etc/pam.d for pam_pwquality or pam_cracklib. Passes when either is configured.
   rationale: This check provides evidence relevant to Secure authentication; it does not prove full control implementation.
   remediation: Configure an approved password-quality module.
   compliance:
@@ -87,7 +87,7 @@ checks:
   - c:sh -c "exec 2>/dev/null; grep -RhsE 'pam_(pwquality|cracklib)[.]so' /etc/pam.d" -> r:pam_pwquality|pam_cracklib
 - id: 2701007
   title: A.5.18 - Dormant accounts have an inactivity period
-  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.5.18.
+  description: Reads the new-account defaults (useradd -D). Passes when INACTIVE is 1 day or more, so accounts lock after their password expires.
   rationale: This check provides evidence relevant to Access rights; it does not prove full control implementation.
   remediation: Configure account inactivity handling.
   compliance:
@@ -100,7 +100,7 @@ checks:
   - c:sh -c "exec 2>/dev/null; useradd -D | grep '^INACTIVE='" -> r:^INACTIVE=\d && !r:^INACTIVE=0$
 - id: 2701008
   title: A.8.2 - Sudo commands require authentication
-  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.2.
+  description: Searches /etc/sudoers and /etc/sudoers.d for active NOPASSWD entries. Passes when there are none.
   rationale: This check provides evidence relevant to Privileged access rights; it does not prove full control implementation.
   remediation: Remove unapproved NOPASSWD entries.
   compliance:
@@ -113,7 +113,7 @@ checks:
   - c:sh -c "exec 2>/dev/null; grep -RhsE '^[[:space:]]*[^#].*NOPASSWD' /etc/sudoers /etc/sudoers.d | grep -q . && echo FOUND || echo NONE" -> r:^NONE$
 - id: 2701009
   title: A.8.18 - Sudo uses a pseudo-terminal
-  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.18.
+  description: Searches sudoers for 'Defaults use_pty'. Passes when it is set.
   rationale: This check provides evidence relevant to Use of privileged utility programs; it does not prove full control implementation.
   remediation: Add Defaults use_pty.
   compliance:
@@ -126,7 +126,7 @@ checks:
   - c:sh -c "exec 2>/dev/null; grep -RhsE '^[[:space:]]*Defaults.*use_pty' /etc/sudoers /etc/sudoers.d" -> r:use_pty
 - id: 2701010
   title: A.8.15 - Audit daemon is active
-  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.15.
+  description: Checks the auditd service. Passes when it is running.
   rationale: This check provides evidence relevant to Logging; it does not prove full control implementation.
   remediation: Enable and start auditd.
   compliance:
@@ -139,7 +139,7 @@ checks:
   - c:sh -c "exec 2>/dev/null; systemctl is-active auditd" -> r:^active$
 - id: 2701011
   title: A.8.15 - Audit rules are immutable
-  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.15.
+  description: Searches the audit rules for '-e 2'. Passes when the rules are locked (immutable) until reboot.
   rationale: This check provides evidence relevant to Logging; it does not prove full control implementation.
   remediation: End the audit ruleset with -e 2.
   compliance:
@@ -152,7 +152,7 @@ checks:
   - c:sh -c "exec 2>/dev/null; grep -RhsE '^[[:space:]]*-e[[:space:]]+2' /etc/audit/audit.rules /etc/audit/rules.d" -> r:-e\s+2
 - id: 2701012
   title: A.8.15 - Authentication log exists
-  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.15.
+  description: Looks for /var/log/auth.log or /var/log/secure. Passes when either exists.
   rationale: This check provides evidence relevant to Logging; it does not prove full control implementation.
   remediation: Configure authentication logging.
   compliance:
@@ -166,7 +166,7 @@ checks:
   - f:/var/log/secure
 - id: 2701013
   title: A.8.15 - Persistent journal storage is configured
-  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.15.
+  description: Reads the journald configuration. Passes when Storage=persistent.
   rationale: This check provides evidence relevant to Logging; it does not prove full control implementation.
   remediation: Set journald Storage=persistent.
   compliance:
@@ -179,7 +179,7 @@ checks:
   - c:sh -c "exec 2>/dev/null; systemd-analyze cat-config systemd/journald.conf | grep -iE '^Storage='" -> r:^Storage=persistent$
 - id: 2701014
   title: A.8.16 - Remote log forwarding is configured
-  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.16.
+  description: Searches the rsyslog configuration for remote forwarding (@, @@, omfwd, target=). Passes when logs are forwarded.
   rationale: This check provides evidence relevant to Monitoring activities; it does not prove full control implementation.
   remediation: Forward security logs centrally.
   compliance:
@@ -192,7 +192,7 @@ checks:
   - c:sh -c "exec 2>/dev/null; grep -RhsE '^[[:space:]]*[^#].*(@@?|omfwd|target=)' /etc/rsyslog.conf /etc/rsyslog.d | grep -q . && echo FOUND || echo NONE" -> r:^FOUND$
 - id: 2701015
   title: A.8.17 - Clock synchronization is active
-  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.17.
+  description: Asks timedatectl whether the clock is NTP-synchronized. Passes when it is.
   rationale: This check provides evidence relevant to Clock synchronization; it does not prove full control implementation.
   remediation: Enable approved time synchronization.
   compliance:
@@ -205,7 +205,7 @@ checks:
   - c:sh -c "exec 2>/dev/null; timedatectl show -p NTPSynchronized --value" -> r:^yes$
 - id: 2701016
   title: A.8.20 - Host firewall is active
-  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.20.
+  description: Checks firewalld, nftables and ufw. Passes when any of them is active.
   rationale: This check provides evidence relevant to Networks security; it does not prove full control implementation.
   remediation: Enable the host firewall.
   compliance:
@@ -218,7 +218,7 @@ checks:
   - 'c:sh -c "exec 2>/dev/null; systemctl is-active firewalld; systemctl is-active nftables; ufw status | head -1" -> r:^active$|^Status: active'
 - id: 2701017
   title: A.8.22 - IP forwarding is disabled
-  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.22.
+  description: Reads the kernel setting net.ipv4.ip_forward. Passes when it is 0 (not routing traffic).
   rationale: This check provides evidence relevant to Segregation of networks; it does not prove full control implementation.
   remediation: Disable forwarding unless approved.
   compliance:
@@ -231,7 +231,7 @@ checks:
   - c:sh -c "exec 2>/dev/null; sysctl -n net.ipv4.ip_forward" -> r:^0$
 - id: 2701018
   title: A.8.20 - Source routing is disabled
-  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.20.
+  description: Reads the kernel setting net.ipv4.conf.all.accept_source_route. Passes when it is 0.
   rationale: This check provides evidence relevant to Networks security; it does not prove full control implementation.
   remediation: Disable source routing.
   compliance:
@@ -244,7 +244,7 @@ checks:
   - c:sh -c "exec 2>/dev/null; sysctl -n net.ipv4.conf.all.accept_source_route" -> r:^0$
 - id: 2701019
   title: A.8.24 - Private keys are not world-readable
-  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.24.
+  description: Finds *.key files under /etc that everyone can read. Passes when there are none.
   rationale: This check provides evidence relevant to Use of cryptography; it does not prove full control implementation.
   remediation: Remove world-read access from private keys.
   compliance:
@@ -257,7 +257,7 @@ checks:
   - c:sh -c "exec 2>/dev/null; find /etc -xdev -type f -name '*.key' -perm /004 -print | grep -q . && echo FOUND || echo NONE" -> r:^NONE$
 - id: 2701020
   title: A.8.24 - Disk encryption is present
-  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.24.
+  description: Lists block devices (lsblk). Passes when an encrypted (crypt/LUKS) volume exists.
   rationale: This check provides evidence relevant to Use of cryptography; it does not prove full control implementation.
   remediation: Use approved disk encryption.
   compliance:
@@ -270,7 +270,7 @@ checks:
   - c:sh -c "exec 2>/dev/null; lsblk -o TYPE,FSTYPE | grep -E 'crypt'" -> r:crypt
 - id: 2701021
   title: A.8.8 - Automatic security updates are enabled
-  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.8.
+  description: Checks unattended-upgrades, dnf-automatic and yum-cron. Passes when any is enabled.
   rationale: This check provides evidence relevant to Management of technical vulnerabilities; it does not prove full control implementation.
   remediation: Enable automatic security updates.
   compliance:
@@ -283,7 +283,7 @@ checks:
   - c:sh -c "exec 2>/dev/null; systemctl is-enabled unattended-upgrades; systemctl is-enabled dnf-automatic.timer; systemctl is-enabled yum-cron" -> r:^enabled$
 - id: 2701022
   title: A.8.7 - Endpoint protection is active
-  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.7.
+  description: Checks ClamAV (clamav-daemon, clamd@scan) and Microsoft Defender for Linux (wdavdaemon). Passes when any is running.
   rationale: This check provides evidence relevant to Protection against malware; it does not prove full control implementation.
   remediation: Activate approved endpoint protection.
   compliance:
@@ -296,7 +296,7 @@ checks:
   - c:sh -c "exec 2>/dev/null; systemctl is-active clamav-daemon; systemctl is-active clamd@scan; pgrep -x wdavdaemon >/dev/null && echo active" -> r:^active$
 - id: 2701023
   title: A.8.12 - Core dumps are restricted
-  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.12.
+  description: Reads the kernel setting fs.suid_dumpable. Passes when it is 0 (no core dumps from privileged programs).
   rationale: This check provides evidence relevant to Data leakage prevention; it does not prove full control implementation.
   remediation: Set fs.suid_dumpable=0.
   compliance:
@@ -309,7 +309,7 @@ checks:
   - c:sh -c "exec 2>/dev/null; sysctl -n fs.suid_dumpable" -> r:^0$
 - id: 2701024
   title: A.7.10 - USB storage is disabled where required
-  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.7.10.
+  description: Reads the modprobe configuration for usb-storage. Passes when the module is blacklisted or replaced with /bin/true or /bin/false.
   rationale: This check provides evidence relevant to Storage media; it does not prove full control implementation.
   remediation: Disable USB storage where policy requires.
   compliance:
@@ -322,7 +322,7 @@ checks:
   - c:sh -c "exec 2>/dev/null; modprobe -n -v usb-storage; modprobe --showconfig | grep -E '^(install|blacklist) usb[_-]storage'" -> r:/bin/true|/bin/false|^blacklist usb
 - id: 2701025
   title: A.8.13 - Backup service or success marker exists
-  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.13.
+  description: Checks borgmatic, restic-backup.timer and the marker file /var/lib/iso27001/last-backup-ok. Passes when any is active or present.
   rationale: This check provides evidence relevant to Information backup; it does not prove full control implementation.
   remediation: Configure verified backups.
   compliance:
@@ -335,7 +335,7 @@ checks:
   - c:sh -c "exec 2>/dev/null; systemctl is-active borgmatic; systemctl is-active restic-backup.timer; test -f /var/lib/iso27001/last-backup-ok && echo active" -> r:^active$
 - id: 2701026
   title: A.8.6 - Root filesystem use is below 90 percent
-  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.6.
+  description: Measures disk use on / (df). Passes when it is below 90%.
   rationale: This check provides evidence relevant to Capacity management; it does not prove full control implementation.
   remediation: Restore capacity below threshold.
   compliance:
@@ -348,7 +348,7 @@ checks:
   - c:sh -c "exec 2>/dev/null; df -P / | awk 'NR==2 {sub(/%/,x,$5); print $5}'" -> n:^(\d+) compare < 90
 - id: 2701027
   title: A.8.21 - Legacy network services are absent
-  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.21.
+  description: Lists installed telnet, rsh, rlogin, rexec and tftp services. Passes when there are none.
   rationale: This check provides evidence relevant to Security of network services; it does not prove full control implementation.
   remediation: Remove insecure legacy services.
   compliance:
@@ -361,7 +361,7 @@ checks:
   - c:sh -c "exec 2>/dev/null; systemctl list-unit-files --type=service | grep -E '^(telnet|rsh|rlogin|rexec|tftp)[.@]' | grep -q . && echo FOUND || echo NONE" -> r:^NONE$
 - id: 2701028
   title: A.8.23 - Web filtering agent is active
-  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.23.
+  description: Looks for squid or a Zscaler, Netskope, Umbrella or Websense process. Passes when one is running.
   rationale: This check provides evidence relevant to Web filtering; it does not prove full control implementation.
   remediation: Deploy approved web filtering.
   compliance:
@@ -374,7 +374,7 @@ checks:
   - c:sh -c "exec 2>/dev/null; (pgrep -x squid || pgrep -f '[z]scaler|[n]etskope|[u]mbrella|[w]ebsense') >/dev/null && echo active" -> r:^active$
 - id: 2701029
   title: A.8.26 - Application workers do not run as root
-  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.26.
+  description: Looks for nginx, httpd, apache2, tomcat, node or java running as root. Passes when there are none.
   rationale: This check provides evidence relevant to Application security requirements; it does not prove full control implementation.
   remediation: Use dedicated non-root service accounts.
   compliance:
@@ -387,7 +387,7 @@ checks:
   - c:sh -c "exec 2>/dev/null; ps -eo user=,comm= | awk -v u=root '$1==u && $2 ~ /^(nginx|httpd|apache2|tomcat|node|java)$/' | grep -q . && echo FOUND || echo NONE" -> r:^NONE$
 - id: 2701030
   title: A.8.31 - Development tools are absent from production
-  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.31.
+  description: Looks for gcc, make and gdb. Passes when none is installed.
   rationale: This check provides evidence relevant to Separation of development, test and production environments; it does not prove full control implementation.
   remediation: Remove unapproved development tools.
   compliance:
@@ -400,7 +400,7 @@ checks:
   - c:sh -c "exec 2>/dev/null; (command -v gcc; command -v make; command -v gdb) | grep -q . && echo FOUND || echo NONE" -> r:^NONE$
 - id: 2701031
   title: A.8.32 - Package-manager history is available
-  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.32.
+  description: Looks for the apt, dnf or yum history log. Passes when one exists.
   rationale: This check provides evidence relevant to Change management; it does not prove full control implementation.
   remediation: Retain package-change history.
   compliance:
@@ -413,7 +413,7 @@ checks:
   - c:sh -c "exec 2>/dev/null; (test -f /var/log/apt/history.log || test -f /var/log/dnf.log || test -f /var/log/yum.log) && echo present" -> r:^present$
 - id: 2701032
   title: A.8.32 - Wazuh FIM is configured
-  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.32.
+  description: Searches the Wazuh ossec.conf for a <syscheck> section. Passes when file integrity monitoring is configured.
   rationale: This check provides evidence relevant to Change management; it does not prove full control implementation.
   remediation: Enable FIM for critical paths.
   compliance:
@@ -426,7 +426,7 @@ checks:
   - c:sh -c "exec 2>/dev/null; grep -q '<syscheck>' /var/ossec/etc/ossec.conf && echo configured" -> r:^configured$
 - id: 2701033
   title: A.8.34 - Audit utility access is restricted
-  description: Technical endpoint evidence supporting ISO/IEC 27001:2022 A.8.34.
+  description: Reads the permissions of /usr/sbin/auditctl. Passes when they are 755 or stricter.
   rationale: This check provides evidence relevant to Protection during audit testing; it does not prove full control implementation.
   remediation: Restrict audit utilities.
   compliance:
