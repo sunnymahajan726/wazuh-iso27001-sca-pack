@@ -1,10 +1,10 @@
 # ISO 27001:2022 Evidence dashboard
 
-Builds a Wazuh dashboard ("ISO 27001:2022 Evidence") from this pack's SCA results: latest score per agent, score trend, currently failing checks with remediation, control status by agent, and the evidence alert log.
+Builds a Wazuh dashboard ("ISO 27001:2022 Evidence") from this pack's results: control ratings from the evidence collectors (heatmap, ratings with what is missing, every criterion, evidence collected), latest SCA score per agent, score trend, currently failing checks with remediation, control status by agent, and the evidence alert log.
 
 ## Why a sync job
 
-SCA raises alerts only for some result changes. Results that reach the manager via integrity sync update wazuh-db without an alert, so an alert-based view drifts from the real state. `wazuh-iso27001-state-sync` copies the current results from wazuh-db into the `wazuh-iso27001-state` index. The current-status panels read that index; score and trend panels read `wazuh-alerts-*`.
+SCA raises alerts only for some result changes. Results that reach the manager via integrity sync update wazuh-db without an alert, so an alert-based view drifts from the real state. `wazuh-iso27001-state-sync` copies the current results from wazuh-db into the `wazuh-iso27001-state` index. The current-status panels read that index; score and trend panels read `wazuh-alerts-*`. The same job scores the evidence collectors' output against `/etc/wazuh-iso27001/controls.yml` into `wazuh-iso27001-state-controls` and `-criteria` (see `../../evidence/README.md`).
 
 ## Install (on the Wazuh manager, as root)
 

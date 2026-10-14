@@ -21,6 +21,8 @@ AUTH = "Basic " + base64.b64encode(CRED.encode()).decode()
 ISO = "rule.groups:iso27001_sca"
 STATE_IP = "wazuh-iso27001-state"
 HISTORY_IP = "wazuh-iso27001-state-history"
+CONTROLS_IP = "wazuh-iso27001-state-controls"
+CRITERIA_IP = "wazuh-iso27001-state-criteria"
 SUMMARY = "data.sca.type:summary and data.sca.policy:ISO*"
 
 
@@ -99,7 +101,9 @@ def xy(chart, horizontal=False, mode="normal", ytitle="Count"):
 COUNT = {"id": "1", "enabled": True, "type": "count", "schema": "metric", "params": {}}
 
 INTRO = """### ISO/IEC 27001:2022 technical evidence
-Results from the **wazuh-iso27001-sca-pack** SCA policies (Linux and Windows), mapped to Annex A controls.
+Results from the **wazuh-iso27001-sca-pack** (Linux and Windows), mapped to Annex A controls.
+
+* **Control ratings** combine configuration *and* log evidence. A collector on each endpoint measures every control (e.g. A.8.13: backup schedule vs. backup runs and their success in the logs over 30 days); the manager scores the measurements against `controls.yml` together with the SCA checks. Ratings: Compliant ≥ 90, Largely compliant ≥ 70, Partially compliant ≥ 40, else Non-compliant.\n* **Why** lists every criterion behind a rating: measured value, required value, result and points. **Evidence collected** shows what the collector found.
 
 * **How each check is tested** shows what every check looks at, when it passes, and the exact rule Wazuh runs.\n* **Control changes** lists every result change per control (e.g. failed → passed) with its scan time; it follows the time picker.\n* **Current status** panels (failing checks, control status, failures by control) read `wazuh-iso27001-state`, which is refreshed from the Wazuh manager every 15 minutes and matches *Endpoint security → Configuration Assessment*. They ignore the time picker.
 * **Score** and **trend** panels read the alert history and follow the time picker.
@@ -109,7 +113,48 @@ objs = [
     {"type": "index-pattern", "id": HISTORY_IP,
      "attributes": {"title": HISTORY_IP + "*", "timeFieldName": "changed_at"}, "references": []},
     {"type": "index-pattern", "id": STATE_IP,
-     "attributes": {"title": STATE_IP + "*"}, "references": []},
+     "attributes": {"title": STATE_IP}, "references": []},
+    {"type": "index-pattern", "id": CONTROLS_IP,
+     "attributes": {"title": CONTROLS_IP}, "references": []},
+    {"type": "index-pattern", "id": CRITERIA_IP,
+     "attributes": {"title": CRITERIA_IP}, "references": []},
+    vis("iso27001-rating-heatmap", "ISO 27001 - Control score by agent (0-100)", "heatmap",
+        {"type": "heatmap", "addTooltip": True, "addLegend": True, "enableHover": False, "legendPosition": "right",
+         "times": [], "colorsNumber": 4, "colorSchema": "Green to Red", "invertColors": True, "percentageMode": False,
+         "setColorRange": True, "colorsRange": [{"from": 0, "to": 40}, {"from": 40, "to": 70},
+                                                 {"from": 70, "to": 90}, {"from": 90, "to": 100.1}],
+         "valueAxes": [{"show": False, "id": "ValueAxis-1", "type": "value",
+                        "scale": {"type": "linear", "defaultYExtents": False},
+                        "labels": {"show": True, "rotate": 0, "overwriteColor": False, "color": "black"}}]},
+        [{"id": "1", "enabled": True, "type": "max", "schema": "metric", "params": {"field": "score", "customLabel": "Score"}},
+         terms("2", "control", "segment", size=60, label="Control"),
+         terms("3", "agent.name", "group", label="Agent")],
+        query="", ip=CONTROLS_IP),
+    vis("iso27001-ratings", "ISO 27001 - Control ratings (configuration + logs)", "table", TABLE,
+        [latest("1", "rating", "Rating", sort="synced_at"),
+         latest("5", "score", "Score", sort="synced_at"),
+         latest("6", "summary", "What is missing", sort="synced_at"),
+         latest("7", "evidence_status", "Evidence", sort="synced_at"),
+         terms("2", "agent.name", "bucket", label="Agent"),
+         terms("3", "control", "bucket", size=60, label="Control"),
+         terms("4", "control_name", "bucket", size=60, label="Name")],
+        query="", ip=CONTROLS_IP),
+    vis("iso27001-criteria", "ISO 27001 - Why: every criterion behind each rating", "table", dict(TABLE, perPage=30),
+        [latest("1", "value", "Measured", sort="synced_at"),
+         latest("5", "expected", "Required", sort="synced_at"),
+         latest("6", "status", "Result", sort="synced_at"),
+         latest("7", "points", "Points", sort="synced_at"),
+         latest("8", "weight", "Of", sort="synced_at"),
+         terms("2", "agent.name", "bucket", label="Agent"),
+         terms("3", "control", "bucket", size=60, label="Control"),
+         terms("4", "description", "bucket", size=40, label="Criterion")],
+        query="", ip=CRITERIA_IP),
+    vis("iso27001-evidence-detail", "ISO 27001 - Evidence collected per control", "table", dict(TABLE, perPage=15),
+        [latest("1", "evidence", "Evidence from configuration and logs", sort="synced_at"),
+         latest("4", "collected_at", "Collected", sort="synced_at"),
+         terms("2", "agent.name", "bucket", label="Agent"),
+         terms("3", "control", "bucket", size=60, label="Control")],
+        query="", ip=CONTROLS_IP),
     vis("iso27001-intro", "ISO 27001 - About", "markdown",
         {"markdown": INTRO, "fontSize": 12, "openLinksInNewTab": False}, [], query=None),
     vis("iso27001-score-latest", "ISO 27001 - Latest score per agent", "table", TABLE,
@@ -177,16 +222,20 @@ objs = [
 ]
 
 # 48-column grid: (object id, type, x, y, w, h)
-layout = [("iso27001-intro", "visualization", 0, 0, 48, 8),
-          ("iso27001-score-latest", "visualization", 0, 8, 20, 12),
-          ("iso27001-score-trend", "visualization", 20, 8, 28, 12),
-          ("iso27001-failing-now", "visualization", 0, 20, 48, 16),
-          ("iso27001-changes", "search", 0, 36, 48, 16),
-          ("iso27001-control-matrix", "visualization", 0, 52, 48, 24),
-          ("iso27001-check-basis", "visualization", 0, 76, 48, 24),
-          ("iso27001-fail-by-control", "visualization", 0, 100, 24, 16),
-          ("iso27001-pass-fail-trend", "visualization", 24, 100, 24, 16),
-          ("iso27001-events", "search", 0, 116, 48, 16)]
+layout = [("iso27001-intro", "visualization", 0, 0, 48, 10),
+          ("iso27001-rating-heatmap", "visualization", 0, 10, 48, 14),
+          ("iso27001-ratings", "visualization", 0, 24, 48, 22),
+          ("iso27001-criteria", "visualization", 0, 46, 48, 26),
+          ("iso27001-evidence-detail", "visualization", 0, 72, 48, 22),
+          ("iso27001-score-latest", "visualization", 0, 94, 20, 12),
+          ("iso27001-score-trend", "visualization", 20, 94, 28, 12),
+          ("iso27001-failing-now", "visualization", 0, 106, 48, 16),
+          ("iso27001-changes", "search", 0, 122, 48, 16),
+          ("iso27001-control-matrix", "visualization", 0, 138, 48, 24),
+          ("iso27001-check-basis", "visualization", 0, 162, 48, 24),
+          ("iso27001-fail-by-control", "visualization", 0, 186, 24, 16),
+          ("iso27001-pass-fail-trend", "visualization", 24, 186, 24, 16),
+          ("iso27001-events", "search", 0, 202, 48, 16)]
 panels, refs = [], []
 for n, (oid, otype, x, y, w, h) in enumerate(layout):
     pid = str(n + 1)
@@ -196,7 +245,7 @@ for n, (oid, otype, x, y, w, h) in enumerate(layout):
 
 objs.append({"type": "dashboard", "id": "iso27001-evidence",
              "attributes": {"title": "ISO 27001:2022 Evidence",
-                            "description": "ISO/IEC 27001:2022 Annex A technical evidence from Wazuh SCA",
+                            "description": "ISO/IEC 27001:2022 Annex A control ratings from configuration and log evidence, plus Wazuh SCA results",
                             "panelsJSON": json.dumps(panels),
                             "optionsJSON": json.dumps({"hidePanelTitles": False, "useMargins": True}),
                             "version": 1, "timeRestore": True, "timeFrom": "now-30d", "timeTo": "now",
@@ -206,7 +255,7 @@ objs.append({"type": "dashboard", "id": "iso27001-evidence",
              "references": refs})
 
 # Store the state index's field list so its panels can aggregate immediately.
-for o in objs[:2]:
+for o in objs[:4]:
     fields = api("GET", "/api/index_patterns/_fields_for_wildcard?pattern=" + o["attributes"]["title"] +
                  "&meta_fields=_source&meta_fields=_id&meta_fields=_type&meta_fields=_index&meta_fields=_score")["fields"]
     o["attributes"]["fields"] = json.dumps(fields)

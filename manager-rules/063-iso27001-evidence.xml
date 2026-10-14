@@ -1,0 +1,38 @@
+<!--
+  ISO/IEC 27001:2022 evidence collector output (wazuh-iso27001-sca-pack).
+  The collectors (evidence/linux, evidence/windows) run from the command wodle
+  and print one JSON line per Annex A control. The built-in JSON decoder
+  decodes them; these rules store them as alerts (full_log keeps the exact JSON) so the manager-side scorer
+  (wazuh-iso27001-state-sync) can rate each control.
+-->
+<group name="iso27001,iso27001_evidence,">
+
+  <rule id="122950" level="3">
+    <decoded_as>json</decoded_as>
+    <field name="iso27001.type">^evidence$</field>
+    <description>ISO 27001 evidence collected for $(iso27001.control) by the $(iso27001.collector) collector</description>
+  </rule>
+
+  <rule id="122951" level="5">
+    <if_sid>122950</if_sid>
+    <field name="iso27001.errors" type="pcre2">[^\[\]\s]</field>
+    <description>ISO 27001 evidence collector reported an error for $(iso27001.control): $(iso27001.errors)</description>
+  </rule>
+
+  <!-- Generic built-in rules (e.g. 2501 "authentication failure") can claim an
+       evidence event first when its quoted log lines contain their keywords.
+       Re-label those events as evidence. -->
+  <rule id="122952" level="3">
+    <if_sid>1002, 1007, 1008, 1010, 2501, 5555, 5604, 7101</if_sid>
+    <decoded_as>json</decoded_as>
+    <field name="iso27001.type">^evidence$</field>
+    <description>ISO 27001 evidence collected for $(iso27001.control) by the $(iso27001.collector) collector</description>
+  </rule>
+
+  <rule id="122953" level="5">
+    <if_sid>122952</if_sid>
+    <field name="iso27001.errors" type="pcre2">[^\[\]\s]</field>
+    <description>ISO 27001 evidence collector reported an error for $(iso27001.control): $(iso27001.errors)</description>
+  </rule>
+
+</group>

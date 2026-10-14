@@ -1,0 +1,353 @@
+# ISO/IEC 27001:2022 control scoring (wazuh-iso27001-sca-pack).
+#
+# The collectors report raw metrics per control; wazuh-iso27001-state-sync
+# scores them here. Edit thresholds to match your policy (e.g. backup RPO,
+# patch SLA, log retention) - no change on the agents is needed.
+#
+# Criterion fields:
+#   metric   metric name reported by the collector
+#   desc     what the criterion means (shown on the dashboard)
+#   weight   share of the control score (0 = shown for information only)
+#   os       linux | windows (omit = both)
+#   eq       pass when the value equals this
+#   in       pass when the value is in this list; partial_in = half credit
+#   max      pass when value <= max; partial = half credit when <= partial
+#   min      pass when value >= min; partial = half credit when >= partial
+#   range    [low, high] inclusive
+#   na_if_missing  skip (not applicable) instead of scoring 0 when the metric is absent
+# A missing metric otherwise scores 0 and shows as "no evidence".
+# Every control also gets the SCA baseline checks mapped to it (sca_weight).
+
+ratings:
+  - {min: 90, rating: Compliant}
+  - {min: 70, rating: Largely compliant}
+  - {min: 40, rating: Partially compliant}
+  - {min: 0, rating: Non-compliant}
+sca_weight: 15
+evidence_max_age_hours: 26
+
+controls:
+  A.5.9:
+    name: Inventory of information and other associated assets
+    criteria:
+      - {metric: wazuh_running, desc: Wazuh agent is running and reporting the asset, eq: true, weight: 20}
+      - {metric: syscollector_enabled, desc: Hardware/software inventory collection is enabled, eq: true, weight: 30}
+      - {metric: inventory_complete, desc: OS, software list and hardware serial were all collected, eq: true, weight: 30}
+      - {metric: hardware_serial_recorded, desc: Hardware serial number is recorded, eq: true, weight: 20}
+      - {metric: software_packages, desc: Installed software packages, weight: 0}
+
+  A.5.16:
+    name: Identity management
+    criteria:
+      - {metric: guest_disabled, desc: Guest account is disabled, eq: true, weight: 20}
+      - {metric: stale_accounts, desc: No enabled account unused for 90+ days, max: 0, partial: 1, weight: 25}
+      - {metric: password_not_required_accounts, desc: Every enabled account requires a password, max: 0, weight: 20}
+      - {metric: account_management_audited, desc: Account create/change/delete events are audited, eq: true, weight: 20}
+      - {metric: never_logged_in_accounts, desc: No enabled account that has never been used, max: 0, partial: 2, weight: 15}
+      - {metric: account_changes_window, desc: Account lifecycle events in the window, weight: 0}
+
+  A.5.17:
+    name: Authentication information
+    criteria:
+      - {metric: empty_password_accounts, os: linux, desc: No account has an empty password, max: 0, weight: 25}
+      - {metric: weak_hash_accounts, os: linux, desc: No password stored with MD5/DES hashes, max: 0, weight: 20}
+      - {metric: shadow_protected, os: linux, desc: /etc/shadow is not world-accessible, eq: true, weight: 20}
+      - {metric: ssh_permit_empty_passwords, os: linux, desc: SSH refuses empty passwords, eq: false, weight: 15}
+      - {metric: pass_max_days, os: linux, desc: Passwords expire within 365 days, max: 365, weight: 10}
+      - {metric: blank_password_network_logon_blocked, os: windows, desc: Blank-password accounts cannot log on over the network, eq: true, weight: 15}
+      - {metric: lm_hash_disabled, os: windows, desc: Weak LM password hashes are not stored, eq: true, weight: 15}
+      - {metric: wdigest_plaintext_disabled, os: windows, desc: WDigest does not keep plaintext passwords in memory, eq: true, weight: 15}
+      - {metric: lsa_protection, os: windows, desc: LSA protection (RunAsPPL) guards stored credentials, eq: true, weight: 10}
+      - {metric: reversible_encryption_disabled, os: windows, desc: Passwords are not stored with reversible encryption, eq: true, weight: 10}
+      - {metric: password_history, os: windows, desc: Password history remembers 24 passwords, min: 24, partial: 5, weight: 10}
+      - {metric: password_max_age_days, os: windows, desc: Passwords expire within 365 days, range: [1, 365], weight: 5}
+      - {metric: network_credentials_not_stored, os: windows, desc: Windows does not store network passwords, eq: true, weight: 5}
+      - {metric: passwords_never_expire, desc: No login account with a never-expiring password, max: 0, partial: 1, weight: 10}
+      - {metric: password_changes_window, desc: Password changes/resets in the window, weight: 0}
+
+  A.5.18:
+    name: Access rights
+    criteria:
+      - {metric: inactive_days_default, desc: New accounts lock 1-45 days after password expiry, range: [1, 45], weight: 25}
+      - {metric: stale_accounts, desc: No enabled login account unused for 90+ days, max: 0, partial: 1, weight: 35}
+      - {metric: never_logged_in_accounts, desc: No enabled login account that has never been used, max: 0, partial: 2, weight: 15}
+      - {metric: account_changes_window, desc: Account and group changes in the window, weight: 0}
+
+  A.7.10:
+    name: Storage media
+    criteria:
+      - {metric: removable_control, desc: USB/removable storage is blocked, write-protected or must be encrypted, eq: true, weight: 45}
+      - {metric: autorun_disabled, os: windows, desc: AutoRun is disabled for all drives, eq: true, weight: 25}
+      - {metric: removable_storage_audited, os: windows, desc: Removable-storage access is audited, eq: true, weight: 15}
+      - {metric: usb_storage_insertions_window, desc: USB storage connections in the window, weight: 0}
+      - {metric: usb_storage_devices_ever, os: windows, desc: USB storage devices ever connected, weight: 0}
+
+  A.8.2:
+    name: Privileged access rights
+    criteria:
+      - {metric: uid0_accounts, os: linux, desc: root is the only UID 0 account, max: 1, weight: 20}
+      - {metric: ssh_root_login_restricted, os: linux, desc: Root cannot log in over SSH with a password, eq: true, weight: 15}
+      - {metric: sudo_nopasswd_entries, os: linux, desc: sudo always asks for a password (no NOPASSWD), max: 0, partial: 1, weight: 20}
+      - {metric: privileged_users, os: linux, desc: At most 3 users hold sudo/admin rights, max: 3, partial: 5, weight: 15}
+      - {metric: not_in_sudoers_window, os: linux, desc: No unauthorised sudo attempts in the window, max: 0, partial: 2, weight: 10}
+      - {metric: privilege_failures_window, os: linux, desc: Few failed privilege elevations in the window, max: 5, partial: 20, weight: 5}
+      - {metric: administrators, os: windows, desc: At most 2 members of local Administrators, max: 2, partial: 3, weight: 25}
+      - {metric: builtin_admin_disabled, os: windows, desc: Built-in Administrator is disabled, eq: true, weight: 15}
+      - {metric: uac_enabled, os: windows, desc: User Account Control is on, eq: true, weight: 20}
+      - {metric: uac_prompts_admins, os: windows, desc: Admins are prompted before elevation, eq: true, weight: 10}
+      - {metric: group_management_audited, os: windows, desc: Administrators-group changes are audited, eq: true, weight: 15}
+      - {metric: sudo_commands_window, os: linux, desc: sudo commands run in the window, weight: 0}
+      - {metric: admin_group_changes_window, os: windows, desc: Administrators-group membership changes in the window, weight: 0}
+      - {metric: privileged_logons_window, os: windows, desc: Logons with administrative privileges in the window, weight: 0}
+
+  A.8.3:
+    name: Information access restriction
+    criteria:
+      - {metric: anonymous_sam_restricted, desc: Anonymous users cannot list accounts, eq: true, weight: 25}
+      - {metric: anonymous_shares_restricted, desc: Anonymous users cannot list shares, eq: true, weight: 20}
+      - {metric: everyone_excludes_anonymous, desc: Everyone permissions do not apply to anonymous users, eq: true, weight: 15}
+      - {metric: null_session_shares, desc: No shares are reachable by null sessions, max: 0, weight: 10}
+      - {metric: shares_open_to_broad_groups, desc: No share grants Everyone/Users write access, max: 0, weight: 30}
+
+  A.8.5:
+    name: Secure authentication
+    criteria:
+      - {metric: ssh_password_auth, os: linux, desc: SSH uses keys, not passwords, eq: false, weight: 15}
+      - {metric: lockout_configured, os: linux, desc: Accounts lock after repeated failures (faillock), eq: true, weight: 15}
+      - {metric: ssh_max_auth_tries, os: linux, desc: SSH allows at most 4 attempts per connection, max: 4, partial: 6, weight: 5}
+      - {metric: lockout_threshold, os: windows, desc: Accounts lock after 1-10 failed attempts, range: [1, 10], weight: 15}
+      - {metric: logon_failures_audited, os: windows, desc: Failed logons are audited, eq: true, weight: 15}
+      - {metric: rdp_nla_required, os: windows, desc: Remote Desktop requires Network Level Authentication, eq: true, weight: 5}
+      - {metric: ctrl_alt_del_required, os: windows, desc: Ctrl+Alt+Del is required to sign in, eq: true, weight: 5}
+      - {metric: password_min_length, desc: Minimum password length is 14, min: 14, partial: 8, weight: 15}
+      - {metric: brute_force_bursts, desc: No brute-force bursts (10+ failures per hour from one source), max: 0, partial: 3, weight: 15}
+      - {metric: success_after_failures, desc: No successful logon from a source with 5+ failures, max: 0, weight: 20}
+      - {metric: failed_logons_window, desc: Failed logons in the window, weight: 0}
+      - {metric: account_lockouts_window, os: windows, desc: Account lockouts in the window, weight: 0}
+
+  A.8.6:
+    name: Capacity management
+    criteria:
+      - {metric: max_filesystem_used_pct, os: linux, desc: Every filesystem is below 80% used, max: 80, partial: 90, weight: 35}
+      - {metric: max_inode_used_pct, os: linux, desc: Every filesystem is below 80% inode use, max: 80, partial: 90, weight: 10}
+      - {metric: oom_events_window, os: linux, desc: No out-of-memory kills in the window, max: 0, partial: 3, weight: 20}
+      - {metric: min_volume_free_pct, os: windows, desc: Every volume has 20% free space, min: 20, partial: 10, weight: 45}
+      - {metric: low_memory_events_window, os: windows, desc: No low-memory warnings in the window, max: 0, partial: 3, weight: 15}
+      - {metric: disk_full_events_window, desc: No disk-full events in the window, max: 0, partial: 3, weight: 25}
+      - {metric: memory_available_pct, desc: Memory available at collection time (%), weight: 0}
+
+  A.8.7:
+    name: Protection against malware
+    criteria:
+      - {metric: av_running, desc: Anti-malware is installed and running, eq: true, weight: 25}
+      - {metric: realtime_protection, os: windows, desc: Real-time protection is on, eq: true, weight: 10}
+      - {metric: on_access_scanning, os: linux, desc: Files are scanned on access, eq: true, weight: 10}
+      - {metric: signature_age_days, desc: Signatures are at most 2 days old, max: 2, partial: 7, weight: 20}
+      - {metric: last_scan_age_days, desc: A scan ran in the last 7 days, max: 7, partial: 30, weight: 15}
+      - {metric: tamper_protection, os: windows, desc: Tamper protection is on, eq: true, weight: 5}
+      - {metric: remediation_failures_window, os: windows, desc: Every detected threat was remediated, max: 0, weight: 10}
+      - {metric: unresolved_threats, os: windows, desc: No unresolved threats, max: 0, weight: 5}
+      - {metric: protection_disabled_events_window, os: windows, desc: Protection was not switched off in the window, max: 0, partial: 2, weight: 5}
+      - {metric: rootcheck_enabled, os: linux, desc: Wazuh rootkit detection is on, eq: true, weight: 15}
+      - {metric: signature_update_failures_window, desc: Few signature update failures, max: 2, partial: 10, weight: 5}
+      - {metric: detections_window, desc: Malware detections in the window, weight: 0}
+
+  A.8.8:
+    name: Management of technical vulnerabilities
+    criteria:
+      - {metric: auto_updates_enabled, desc: Automatic updates are enabled, eq: true, weight: 15}
+      - {metric: days_since_last_upgrade, desc: Updates were installed in the last 35 days, max: 35, partial: 60, weight: 20}
+      - {metric: days_since_metadata_refresh, desc: Update sources were checked in the last 7 days, max: 7, partial: 14, weight: 10}
+      - {metric: pending_security_updates, desc: No security updates waiting, max: 0, partial: 5, weight: 25}
+      - {metric: update_failures_window, desc: No failed updates in the window, max: 0, partial: 3, weight: 10}
+      - {metric: reboot_required, desc: No restart pending to finish updates, eq: false, weight: 10}
+      - {metric: running_latest_kernel, os: linux, desc: The newest installed kernel is running, eq: true, weight: 10}
+      - {metric: pending_updates, desc: All pending updates, weight: 0}
+
+  A.8.12:
+    name: Data leakage prevention
+    criteria:
+      - {metric: suid_dumpable, desc: Privileged programs cannot write core dumps, eq: 0, weight: 40}
+      - {metric: core_dumps_restricted, desc: Core dumps are disabled system-wide, eq: true, weight: 40}
+      - {metric: core_dumps_window, desc: No core dumps captured in the window, max: 0, partial: 3, weight: 20}
+
+  A.8.13:
+    name: Information backup
+    criteria:
+      - {metric: backup_configured, desc: A backup job is configured, eq: true, weight: 15}
+      - {metric: backup_interval_hours, desc: Backups are scheduled at least daily, max: 24, partial: 168, weight: 10}
+      - {metric: backup_log_verified, desc: Backup runs are recorded in logs, eq: true, weight: 10}
+      - {metric: backup_adherence_pct, desc: Backups ran as often as scheduled (successful runs / expected runs), min: 95, partial: 80, weight: 20}
+      - {metric: backup_success_rate_pct, desc: Backup runs succeeded (successful / all runs), min: 95, partial: 80, weight: 20}
+      - {metric: backup_last_success_age_ratio, desc: Latest successful backup is within 1.5 schedule intervals, max: 1.5, partial: 3, weight: 15}
+      - {metric: backup_missed_runs, desc: No scheduled backup was missed, max: 0, partial: 2, weight: 10}
+      - {metric: backup_last_success, desc: Latest successful backup, weight: 0}
+      - {metric: backup_runs_failed, desc: Failed backup runs in the window, weight: 0}
+
+  A.8.15:
+    name: Logging
+    criteria:
+      - {metric: auditd_active, os: linux, desc: The audit daemon is running, eq: true, weight: 15}
+      - {metric: audit_rules_immutable, os: linux, desc: Audit rules are locked until reboot, eq: true, weight: 5}
+      - {metric: journal_persistent, os: linux, desc: The system journal survives reboots, eq: true, weight: 10}
+      - {metric: security_log_max_mb, os: windows, desc: Security log holds at least 1 GB, min: 1024, partial: 196, weight: 10}
+      - {metric: log_cleared_window, os: windows, desc: Logs were not cleared in the window, max: 0, weight: 20}
+      - {metric: audit_coverage_pct, desc: Audit policy covers 80% of required event types, min: 80, partial: 50, weight: 20}
+      - {metric: log_retention_days, desc: At least 90 days of logs are retained, min: 90, partial: 30, weight: 20}
+      - {metric: logging_alive, desc: Events were logged in the last 24 hours, eq: true, weight: 10}
+      - {metric: log_loss_events_window, desc: No log-loss events (log full, backlog/rate limit), max: 0, partial: 5, weight: 5}
+      - {metric: security_events_per_day, os: windows, desc: Security events per day, weight: 0}
+
+  A.8.16:
+    name: Monitoring activities
+    criteria:
+      - {metric: wazuh_connected, desc: Wazuh agent is connected to the manager, eq: true, weight: 25}
+      - {metric: keepalive_age_minutes, os: windows, desc: Last keepalive within 10 minutes, max: 10, partial: 60, weight: 10, na_if_missing: true}
+      - {metric: auth_logs_monitored, os: linux, desc: Authentication logs are collected by Wazuh, eq: true, weight: 20}
+      - {metric: audit_log_monitored, os: linux, desc: The audit log is collected by Wazuh, eq: true, weight: 15}
+      - {metric: central_collection, os: linux, desc: Logs leave the host (Wazuh or syslog forwarding), eq: true, weight: 15}
+      - {metric: forwarding_errors_window, os: linux, desc: No log-forwarding errors in the window, max: 0, partial: 5, weight: 10}
+      - {metric: security_log_monitored, os: windows, desc: The Security event log is collected by Wazuh, eq: true, weight: 20}
+      - {metric: monitored_channels_pct, os: windows, desc: Wazuh collects 80% of key event channels, min: 80, partial: 50, weight: 15}
+      - {metric: scriptblock_logging, os: windows, desc: PowerShell script-block logging is on, eq: true, weight: 15}
+      - {metric: sysmon_running, os: windows, desc: Sysmon is running for detailed process/network telemetry, eq: true, weight: 15}
+      - {metric: fail2ban_active, os: linux, desc: fail2ban is active, weight: 0}
+
+  A.8.17:
+    name: Clock synchronization
+    criteria:
+      - {metric: ntp_enabled, desc: Time synchronization is configured, eq: true, weight: 15}
+      - {metric: ntp_synchronized, os: linux, desc: The clock reports NTP-synchronized, eq: true, weight: 10}
+      - {metric: time_service_running, os: windows, desc: Windows Time service is running, eq: true, weight: 10}
+      - {metric: clock_offset_seconds, desc: Clock is within 1 second of the time source, max: 1, partial: 5, weight: 30}
+      - {metric: last_sync_age_hours, desc: Last successful sync within 24 hours, max: 24, partial: 168, weight: 20}
+      - {metric: sync_failures_window, desc: Few sync failures in the window, max: 5, partial: 30, weight: 15}
+      - {metric: clock_steps_window, desc: No clock jumps (steps of 1 s or more) in the window, max: 0, partial: 3, weight: 10}
+
+  A.8.18:
+    name: Use of privileged utility programs
+    criteria:
+      - {metric: sudo_use_pty, os: linux, desc: sudo runs commands in a pseudo-terminal, eq: true, weight: 20}
+      - {metric: sudo_logging, os: linux, desc: sudo use is logged, eq: true, weight: 20}
+      - {metric: unexpected_suid_binaries, os: linux, desc: No setuid programs outside the standard list, max: 0, partial: 3, weight: 45}
+      - {metric: remote_registry_disabled, os: windows, desc: Remote Registry is disabled, eq: true, weight: 25}
+      - {metric: powershell_v2_enabled, os: windows, desc: PowerShell 2.0 (no logging) is removed, eq: false, weight: 20}
+      - {metric: psexec_service_present, os: windows, desc: No PsExec service left behind, eq: false, weight: 15}
+      - {metric: debug_privilege_restricted, os: windows, desc: Only Administrators can debug programs, eq: true, weight: 15}
+      - {metric: winrm_running, os: windows, desc: WinRM remote management is not running, eq: false, weight: 10}
+      - {metric: services_installed_window, os: windows, desc: Services installed in the window, weight: 0}
+
+  A.8.19:
+    name: Installation of software on operational systems
+    criteria:
+      - {metric: always_install_elevated, desc: Installers cannot run elevated for standard users, eq: false, weight: 40}
+      - {metric: application_control, desc: Application control (Smart App Control/AppLocker) is enforced, eq: true, weight: 30}
+      - {metric: software_install_failures_window, desc: Few failed installs, max: 2, partial: 10, weight: 15}
+      - {metric: software_installs_window, desc: Programs installed in the window, weight: 0}
+      - {metric: smart_app_control, desc: Smart App Control state, weight: 0}
+
+  A.8.20:
+    name: Networks security
+    criteria:
+      - {metric: firewall_active, os: linux, desc: A host firewall is active, eq: true, weight: 25}
+      - {metric: default_inbound_deny, os: linux, desc: Inbound traffic is denied by default, eq: true, weight: 25}
+      - {metric: kernel_network_hardening_pct, os: linux, desc: Kernel network hardening settings applied, min: 100, partial: 70, weight: 20}
+      - {metric: firewall_all_profiles_enabled, os: windows, desc: Firewall is on for every profile, eq: true, weight: 25}
+      - {metric: default_inbound_block, os: windows, desc: Inbound traffic is blocked by default, eq: true, weight: 20}
+      - {metric: inbound_allow_rules_public, os: windows, desc: At most 10 inbound allow rules on public networks, max: 10, partial: 25, weight: 10}
+      - {metric: firewall_stopped_events_window, os: windows, desc: Firewall was not stopped in the window, max: 0, weight: 10}
+      - {metric: firewall_logs_drops, desc: Dropped connections are logged, eq: true, weight: 15}
+      - {metric: exposed_listening_services, desc: At most 5 services listen on the network, max: 5, partial: 10, weight: 15}
+      - {metric: firewall_rule_changes_window, os: windows, desc: Firewall rule/setting changes in the window, weight: 0}
+
+  A.8.21:
+    name: Security of network services
+    criteria:
+      - {metric: legacy_services_installed, os: linux, desc: No telnet/rsh/tftp/NIS services installed, max: 0, weight: 25}
+      - {metric: plaintext_listeners, os: linux, desc: No plaintext protocols listening, max: 0, weight: 25}
+      - {metric: ssh_weak_algorithms, os: linux, desc: SSH offers no weak ciphers/MACs/key exchange, max: 0, partial: 2, weight: 20}
+      - {metric: ssh_x11_forwarding, os: linux, desc: SSH X11 forwarding is off, eq: false, weight: 10}
+      - {metric: smb_min_protocol_ok, os: linux, desc: Samba refuses SMBv1, eq: true, weight: 10, na_if_missing: true}
+      - {metric: nfs_insecure_exports, os: linux, desc: No NFS exports with no_root_squash/insecure, max: 0, weight: 10}
+      - {metric: smb1_server_enabled, os: windows, desc: SMBv1 server is off, eq: false, weight: 25}
+      - {metric: smb1_client_enabled, os: windows, desc: SMBv1 client is off, eq: false, weight: 15}
+      - {metric: llmnr_disabled, os: windows, desc: LLMNR name resolution is off, eq: true, weight: 15}
+      - {metric: netbios_disabled_pct, os: windows, desc: NetBIOS over TCP/IP is off on all adapters, min: 100, partial: 50, weight: 10}
+      - {metric: legacy_tls_enabled, os: windows, desc: SSL 3.0/TLS 1.0/1.1 are not enabled for servers, eq: false, weight: 15}
+      - {metric: smb1_access_attempts_window, os: windows, desc: No SMBv1 connection attempts in the window, max: 0, weight: 10}
+      - {metric: rdp_enabled, os: windows, desc: Remote Desktop enabled, weight: 0}
+
+  A.8.22:
+    name: Segregation of networks
+    criteria:
+      - {metric: ipv4_forwarding, desc: Host does not route IPv4 between networks, eq: false, weight: 40}
+      - {metric: ipv6_forwarding, desc: Host does not route IPv6 between networks, eq: false, weight: 30}
+      - {metric: multi_homed_with_forwarding, desc: Not bridging two physical networks, eq: false, weight: 30}
+
+  A.8.23:
+    name: Web filtering
+    criteria:
+      - {metric: filtering_layer, desc: A web filter is in place (agent, proxy, filtering DNS or network protection), eq: true, weight: 45}
+      - {metric: windows_smartscreen, os: windows, desc: Windows SmartScreen is on, eq: true, weight: 20}
+      - {metric: edge_smartscreen_on, os: windows, desc: Edge SmartScreen is not disabled, eq: true, weight: 10}
+      - {metric: edge_smartscreen_enforced, os: windows, desc: Edge SmartScreen is enforced by policy, eq: true, weight: 5}
+      - {metric: network_protection, os: windows, desc: Defender network protection blocks malicious sites, in: [block], partial_in: [audit], weight: 20}
+      - {metric: filtering_dns, os: linux, desc: Uses a filtering DNS resolver, eq: true, weight: 20}
+      - {metric: web_blocks_window, os: windows, desc: Web requests blocked in the window, weight: 0}
+
+  A.8.24:
+    name: Use of cryptography
+    criteria:
+      - {metric: root_encrypted, os: linux, desc: Root filesystem is on an encrypted volume, eq: true, weight: 35}
+      - {metric: swap_encrypted_or_absent, os: linux, desc: Swap is encrypted or absent, eq: true, weight: 10}
+      - {metric: weak_luks_volumes, os: linux, desc: LUKS volumes use strong ciphers and keys, max: 0, weight: 10}
+      - {metric: world_readable_private_keys, os: linux, desc: No world-readable private keys, max: 0, weight: 20}
+      - {metric: weak_ssh_host_keys, os: linux, desc: No DSA or short RSA SSH host keys, max: 0, weight: 10}
+      - {metric: os_volume_protected, os: windows, desc: System drive is protected by BitLocker/device encryption, eq: true, weight: 30}
+      - {metric: fixed_volumes_protected_pct, os: windows, desc: Every fixed drive is encrypted, min: 100, partial: 50, weight: 15}
+      - {metric: strong_encryption_method, os: windows, desc: Encryption uses XTS-AES, eq: true, weight: 10}
+      - {metric: recovery_password_protector, os: windows, desc: Encrypted drives have a recovery password, eq: true, weight: 10}
+      - {metric: protection_suspended_volumes, os: windows, desc: No drive has protection suspended, max: 0, weight: 10}
+      - {metric: smb_server_signing_required, os: windows, desc: SMB server signing is required, eq: true, weight: 5}
+      - {metric: smb_client_signing_required, os: windows, desc: SMB client signing is required, eq: true, weight: 5}
+      - {metric: legacy_tls_allowed, desc: Legacy TLS/SSL is not enabled, eq: false, weight: 15}
+
+  A.8.26:
+    name: Application security requirements
+    criteria:
+      - {metric: app_workers_as_root, desc: Application workers do not run as root, max: 0, weight: 50}
+      - {metric: web_legacy_tls, desc: Web server does not offer TLS 1.0/1.1, eq: false, weight: 25, na_if_missing: true}
+      - {metric: web_version_disclosure, desc: Web server hides its version, eq: false, weight: 25, na_if_missing: true}
+
+  A.8.31:
+    name: Separation of development, test and production environments
+    criteria:
+      - {metric: core_dev_tools_present, os: linux, desc: No compilers/debuggers (gcc, make, gdb) on the host, max: 0, partial: 1, weight: 60}
+      - {metric: dev_tools_present, os: linux, desc: Few development tools installed, max: 0, partial: 3, weight: 25}
+      - {metric: developer_mode, os: windows, desc: Developer Mode is off, eq: false, weight: 60}
+      - {metric: dev_tools_present, os: windows, desc: Development tools installed, weight: 0}
+      - {metric: wsl_distributions, os: windows, desc: WSL distributions installed, weight: 0}
+
+  A.8.32:
+    name: Change management
+    criteria:
+      - {metric: package_history_available, os: linux, desc: Package changes are recorded, eq: true, weight: 20}
+      - {metric: etc_version_controlled, os: linux, desc: /etc is under version control (etckeeper/git), eq: true, weight: 15}
+      - {metric: change_audit_pct, os: windows, desc: Service, task and policy changes are audited, min: 100, partial: 34, weight: 25}
+      - {metric: fim_configured, desc: Wazuh file integrity monitoring is configured, eq: true, weight: 25}
+      - {metric: fim_critical_coverage_pct, desc: FIM covers the critical system paths, min: 80, partial: 40, weight: 25}
+      - {metric: fim_realtime, desc: FIM watches in real time / who-data, eq: true, weight: 15}
+      - {metric: package_changes_window, os: linux, desc: Package transactions in the window, weight: 0}
+      - {metric: changes_window, os: windows, desc: Recorded changes in the window, weight: 0}
+
+  A.8.34:
+    name: Protection of information systems during audit testing
+    criteria:
+      - {metric: audit_tools_restricted, os: linux, desc: Audit tools are writable by root only, eq: true, weight: 30}
+      - {metric: audit_logs_protected, os: linux, desc: Audit logs are readable by root/admin group only, eq: true, weight: 30}
+      - {metric: audit_config_watched, os: linux, desc: Changes to the audit configuration are audited, eq: true, weight: 25}
+      - {metric: audit_service_stops_window, os: linux, desc: auditd was not stopped in the window, max: 0, partial: 2, weight: 15}
+      - {metric: audit_policy_change_audited, os: windows, desc: Audit-policy changes are audited, eq: true, weight: 30}
+      - {metric: security_privilege_restricted, os: windows, desc: Only Administrators manage auditing and the security log, eq: true, weight: 30}
+      - {metric: log_cleared_window, os: windows, desc: Security log was not cleared in the window, max: 0, weight: 25}
+      - {metric: audit_policy_changes_window, os: windows, desc: Few audit-policy changes in the window, max: 0, partial: 3, weight: 15}
