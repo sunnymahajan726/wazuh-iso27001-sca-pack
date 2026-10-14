@@ -586,7 +586,7 @@ $Controls['A.8.16'] = {
     $st = Get-Content (Join-Path (Get-AgentDir) 'wazuh-agent.state') -Raw -ErrorAction SilentlyContinue
     M 'wazuh_connected' ([bool]($st -match "status='connected'"))
     if ($st -match "last_keepalive='([^']+)'") {
-        try { M 'keepalive_age_minutes' ([math]::Round(($Now - [datetime]::ParseExact($Matches[1], 'yyyy-MM-dd HH:mm:ss', $null)).TotalMinutes, 1)) } catch {}
+        try { M 'keepalive_age_minutes' ([math]::Max(0, [math]::Round(($Now - [datetime]::ParseExact($Matches[1], 'yyyy-MM-dd HH:mm:ss', $null)).TotalMinutes, 1))) } catch {}
     }
     $conf = Get-WazuhConf
     $want = 'Security', 'System', 'Application', 'Microsoft-Windows-Windows Defender/Operational', 'Microsoft-Windows-PowerShell/Operational', 'Microsoft-Windows-Sysmon/Operational'
@@ -628,7 +628,9 @@ $Controls['A.8.17'] = {
     if ($task) { $ti = Get-ScheduledTaskInfo -InputObject $task -ErrorAction SilentlyContinue; if ($ti -and $ti.LastTaskResult -eq 0 -and $ti.LastRunTime -gt [datetime]'2000-01-01' -and (-not $last -or $ti.LastRunTime -gt $last)) { $last = $ti.LastRunTime } }
     M 'last_sync_age_hours' (AgeH $last)
     M 'sync_failures_window' $badEv.Count
-    $jumps = @(); foreach ($e in (Get-Ev 'System' 1 -Provider 'Microsoft-Windows-Kernel-General')) { $d = EvData $e; try { $delta = [math]::Abs(([datetime]$d.NewTime - [datetime]$d.OldTime).TotalSeconds); if ($delta -lt 86400) { $jumps += $delta } } catch {} }
+    $jumps = @(); foreach ($e in (Get-Ev 'System' 1 -Provider 'Microsoft-Windows-Kernel-General')) { $d = EvData $e; # Reason 2/3 = set from the hardware clock (boot, wake from sleep) or time-zone change, not drift.
+        if ("$($d.Reason)" -in '2', '3') { continue }
+        try { $delta = [math]::Abs(([datetime]$d.NewTime - [datetime]$d.OldTime).TotalSeconds); if ($delta -lt 86400) { $jumps += $delta } } catch {} }
     M 'max_clock_correction_seconds' $(if ($jumps.Count) { [math]::Round(($jumps | Measure-Object -Maximum).Maximum, 3) } else { $null })
     M 'clock_steps_window' @($jumps | Where-Object { $_ -ge 1 }).Count
     E "Windows Time service $($svc.State) ($($svc.StartMode)); type $type; servers $server"

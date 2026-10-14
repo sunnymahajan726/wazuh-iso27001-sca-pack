@@ -32,7 +32,7 @@ controls:
     criteria:
       - {metric: wazuh_running, desc: Wazuh agent is running and reporting the asset, eq: true, weight: 20}
       - {metric: syscollector_enabled, desc: Hardware/software inventory collection is enabled, eq: true, weight: 30}
-      - {metric: inventory_complete, desc: OS, software list and hardware serial were all collected, eq: true, weight: 30}
+      - {metric: inventory_complete, desc: "OS, software list and hardware serial were all collected", eq: true, weight: 30}
       - {metric: hardware_serial_recorded, desc: Hardware serial number is recorded, eq: true, weight: 20}
       - {metric: software_packages, desc: Installed software packages, weight: 0}
 
@@ -76,7 +76,7 @@ controls:
   A.7.10:
     name: Storage media
     criteria:
-      - {metric: removable_control, desc: USB/removable storage is blocked, write-protected or must be encrypted, eq: true, weight: 45}
+      - {metric: removable_control, desc: "USB/removable storage is blocked, write-protected or must be encrypted", eq: true, weight: 45}
       - {metric: autorun_disabled, os: windows, desc: AutoRun is disabled for all drives, eq: true, weight: 25}
       - {metric: removable_storage_audited, os: windows, desc: Removable-storage access is audited, eq: true, weight: 15}
       - {metric: usb_storage_insertions_window, desc: USB storage connections in the window, weight: 0}
@@ -112,7 +112,7 @@ controls:
   A.8.5:
     name: Secure authentication
     criteria:
-      - {metric: ssh_password_auth, os: linux, desc: SSH uses keys, not passwords, eq: false, weight: 15}
+      - {metric: ssh_password_auth, os: linux, desc: "SSH uses keys, not passwords", eq: false, weight: 15}
       - {metric: lockout_configured, os: linux, desc: Accounts lock after repeated failures (faillock), eq: true, weight: 15}
       - {metric: ssh_max_auth_tries, os: linux, desc: SSH allows at most 4 attempts per connection, max: 4, partial: 6, weight: 5}
       - {metric: lockout_threshold, os: windows, desc: Accounts lock after 1-10 failed attempts, range: [1, 10], weight: 15}
@@ -195,7 +195,7 @@ controls:
       - {metric: audit_coverage_pct, desc: Audit policy covers 80% of required event types, min: 80, partial: 50, weight: 20}
       - {metric: log_retention_days, desc: At least 90 days of logs are retained, min: 90, partial: 30, weight: 20}
       - {metric: logging_alive, desc: Events were logged in the last 24 hours, eq: true, weight: 10}
-      - {metric: log_loss_events_window, desc: No log-loss events (log full, backlog/rate limit), max: 0, partial: 5, weight: 5}
+      - {metric: log_loss_events_window, desc: "No log-loss events (log full, backlog/rate limit)", max: 0, partial: 5, weight: 5}
       - {metric: security_events_per_day, os: windows, desc: Security events per day, weight: 0}
 
   A.8.16:
@@ -287,7 +287,7 @@ controls:
   A.8.23:
     name: Web filtering
     criteria:
-      - {metric: filtering_layer, desc: A web filter is in place (agent, proxy, filtering DNS or network protection), eq: true, weight: 45}
+      - {metric: filtering_layer, desc: "A web filter is in place (agent, proxy, filtering DNS or network protection)", eq: true, weight: 45}
       - {metric: windows_smartscreen, os: windows, desc: Windows SmartScreen is on, eq: true, weight: 20}
       - {metric: edge_smartscreen_on, os: windows, desc: Edge SmartScreen is not disabled, eq: true, weight: 10}
       - {metric: edge_smartscreen_enforced, os: windows, desc: Edge SmartScreen is enforced by policy, eq: true, weight: 5}
@@ -322,7 +322,7 @@ controls:
   A.8.31:
     name: Separation of development, test and production environments
     criteria:
-      - {metric: core_dev_tools_present, os: linux, desc: No compilers/debuggers (gcc, make, gdb) on the host, max: 0, partial: 1, weight: 60}
+      - {metric: core_dev_tools_present, os: linux, desc: "No compilers/debuggers (gcc, make, gdb) on the host", max: 0, partial: 1, weight: 60}
       - {metric: dev_tools_present, os: linux, desc: Few development tools installed, max: 0, partial: 3, weight: 25}
       - {metric: developer_mode, os: windows, desc: Developer Mode is off, eq: false, weight: 60}
       - {metric: dev_tools_present, os: windows, desc: Development tools installed, weight: 0}
@@ -333,7 +333,7 @@ controls:
     criteria:
       - {metric: package_history_available, os: linux, desc: Package changes are recorded, eq: true, weight: 20}
       - {metric: etc_version_controlled, os: linux, desc: /etc is under version control (etckeeper/git), eq: true, weight: 15}
-      - {metric: change_audit_pct, os: windows, desc: Service, task and policy changes are audited, min: 100, partial: 34, weight: 25}
+      - {metric: change_audit_pct, os: windows, desc: "Service, task and policy changes are audited", min: 100, partial: 34, weight: 25}
       - {metric: fim_configured, desc: Wazuh file integrity monitoring is configured, eq: true, weight: 25}
       - {metric: fim_critical_coverage_pct, desc: FIM covers the critical system paths, min: 80, partial: 40, weight: 25}
       - {metric: fim_realtime, desc: FIM watches in real time / who-data, eq: true, weight: 15}

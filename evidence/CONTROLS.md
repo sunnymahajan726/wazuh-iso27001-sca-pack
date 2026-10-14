@@ -10,7 +10,7 @@ Ratings: Compliant ≥ 90, Largely compliant ≥ 70, Partially compliant ≥ 40,
 |---|---|---|---|---|
 | both | Wazuh agent is running and reporting the asset | `wazuh_running` | yes | 20 |
 | both | Hardware/software inventory collection is enabled | `syscollector_enabled` | yes | 30 |
-| both | OS | `inventory_complete` | yes | 30 |
+| both | OS, software list and hardware serial were all collected | `inventory_complete` | yes | 30 |
 | both | Hardware serial number is recorded | `hardware_serial_recorded` | yes | 20 |
 | both | Installed software packages | `software_packages` | shown only | 0 |
 
@@ -58,7 +58,7 @@ Ratings: Compliant ≥ 90, Largely compliant ≥ 70, Partially compliant ≥ 40,
 
 | OS | Criterion | Metric | Required | Weight |
 |---|---|---|---|---|
-| both | USB/removable storage is blocked | `removable_control` | yes | 45 |
+| both | USB/removable storage is blocked, write-protected or must be encrypted | `removable_control` | yes | 45 |
 | windows | AutoRun is disabled for all drives | `autorun_disabled` | yes | 25 |
 | windows | Removable-storage access is audited | `removable_storage_audited` | yes | 15 |
 | both | USB storage connections in the window | `usb_storage_insertions_window` | shown only | 0 |
@@ -97,7 +97,7 @@ Ratings: Compliant ≥ 90, Largely compliant ≥ 70, Partially compliant ≥ 40,
 
 | OS | Criterion | Metric | Required | Weight |
 |---|---|---|---|---|
-| linux | SSH uses keys | `ssh_password_auth` | no | 15 |
+| linux | SSH uses keys, not passwords | `ssh_password_auth` | no | 15 |
 | linux | Accounts lock after repeated failures (faillock) | `lockout_configured` | yes | 15 |
 | linux | SSH allows at most 4 attempts per connection | `ssh_max_auth_tries` | ≤ 4 (half ≤ 6) | 5 |
 | windows | Accounts lock after 1-10 failed attempts | `lockout_threshold` | 1-10 | 15 |
@@ -186,7 +186,7 @@ Ratings: Compliant ≥ 90, Largely compliant ≥ 70, Partially compliant ≥ 40,
 | both | Audit policy covers 80% of required event types | `audit_coverage_pct` | ≥ 80 (half ≥ 50) | 20 |
 | both | At least 90 days of logs are retained | `log_retention_days` | ≥ 90 (half ≥ 30) | 20 |
 | both | Events were logged in the last 24 hours | `logging_alive` | yes | 10 |
-| both | No log-loss events (log full | `log_loss_events_window` | ≤ 0 (half ≤ 5) | 5 |
+| both | No log-loss events (log full, backlog/rate limit) | `log_loss_events_window` | ≤ 0 (half ≤ 5) | 5 |
 | windows | Security events per day | `security_events_per_day` | shown only | 0 |
 
 ## A.8.16 Monitoring activities
@@ -286,7 +286,7 @@ Ratings: Compliant ≥ 90, Largely compliant ≥ 70, Partially compliant ≥ 40,
 
 | OS | Criterion | Metric | Required | Weight |
 |---|---|---|---|---|
-| both | A web filter is in place (agent | `filtering_layer` | yes | 45 |
+| both | A web filter is in place (agent, proxy, filtering DNS or network protection) | `filtering_layer` | yes | 45 |
 | windows | Windows SmartScreen is on | `windows_smartscreen` | yes | 20 |
 | windows | Edge SmartScreen is not disabled | `edge_smartscreen_on` | yes | 10 |
 | windows | Edge SmartScreen is enforced by policy | `edge_smartscreen_enforced` | yes | 5 |
@@ -324,7 +324,7 @@ Ratings: Compliant ≥ 90, Largely compliant ≥ 70, Partially compliant ≥ 40,
 
 | OS | Criterion | Metric | Required | Weight |
 |---|---|---|---|---|
-| linux | No compilers/debuggers (gcc | `core_dev_tools_present` | ≤ 0 (half ≤ 1) | 60 |
+| linux | No compilers/debuggers (gcc, make, gdb) on the host | `core_dev_tools_present` | ≤ 0 (half ≤ 1) | 60 |
 | linux | Few development tools installed | `dev_tools_present` | ≤ 0 (half ≤ 3) | 25 |
 | windows | Developer Mode is off | `developer_mode` | no | 60 |
 | windows | Development tools installed | `dev_tools_present` | shown only | 0 |
@@ -336,7 +336,7 @@ Ratings: Compliant ≥ 90, Largely compliant ≥ 70, Partially compliant ≥ 40,
 |---|---|---|---|---|
 | linux | Package changes are recorded | `package_history_available` | yes | 20 |
 | linux | /etc is under version control (etckeeper/git) | `etc_version_controlled` | yes | 15 |
-| windows | Service | `change_audit_pct` | ≥ 100 (half ≥ 34) | 25 |
+| windows | Service, task and policy changes are audited | `change_audit_pct` | ≥ 100 (half ≥ 34) | 25 |
 | both | Wazuh file integrity monitoring is configured | `fim_configured` | yes | 25 |
 | both | FIM covers the critical system paths | `fim_critical_coverage_pct` | ≥ 80 (half ≥ 40) | 25 |
 | both | FIM watches in real time / who-data | `fim_realtime` | yes | 15 |
