@@ -14,7 +14,7 @@ Metrics are raw measurements; scoring against thresholds happens on the manager
 Run by hand (elevated PowerShell) to see what it reports:
   powershell -ExecutionPolicy Bypass -File iso27001_collect.ps1 A.8.13
 #>
-param([string[]]$Only)
+param([Parameter(ValueFromRemainingArguments = $true)][string[]]$Only)
 
 $Version = '1.0'
 $WindowDays = 30
@@ -539,7 +539,8 @@ $Controls['A.8.13'] = {
     M 'restore_points' $shadow.Count
     Backup-Stats $mech $runs
     if (-not $mech.Count) { $script:EV.Insert(0, 'No backup found: no backup scheduled task, Windows/Server Backup, File History, OneDrive folder backup, Veeam or status log') }
-    E "Expected $($script:M['backup_runs_expected']) runs in $WindowDays days (interval $($script:M['backup_interval_hours']) h, $($script:M['backup_interval_source'])); $($script:M['backup_runs_success']) succeeded, $($script:M['backup_runs_failed']) failed; last success $($script:M['backup_last_success'])"
+    if ($script:M['backup_interval_hours']) { E "Expected $($script:M['backup_runs_expected']) runs in $WindowDays days (every $($script:M['backup_interval_hours']) h, $($script:M['backup_interval_source'])); $($script:M['backup_runs_success']) succeeded, $($script:M['backup_runs_failed']) failed; last success $(if ($script:M['backup_last_success']) { $script:M['backup_last_success'] } else { 'never in the window' })" }
+    else { E "No backup schedule known; $($script:M['backup_runs_success']) successful and $($script:M['backup_runs_failed']) failed runs logged in $WindowDays days" }
     E "$($shadow.Count) restore points / shadow copies (same disk: not a backup)"
     foreach ($r in (@($runs | Where-Object { -not $_.Ok -and $_.Time -ge $Since } | Sort-Object Time -Descending) | Select-Object -First 5)) { E "$(Iso $r.Time) FAILED $($r.Job)" }
 }

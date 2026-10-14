@@ -876,9 +876,13 @@ def backup():
     m = backup_stats(mechanisms, runs)
     if not mechanisms:
         ev.insert(0, "No backup job found (systemd timers, cron, status log or marker)")
-    ev.append(f"Expected {m.get('backup_runs_expected', '?')} runs in {CFG['window_days']} days "
-              f"(interval {m['backup_interval_hours']} h, {m['backup_interval_source'] or 'unknown'}); "
-              f"{m['backup_runs_success']} succeeded, {m['backup_runs_failed']} failed")
+    if m["backup_interval_hours"]:
+        ev.append(f"Expected {m['backup_runs_expected']} runs in {CFG['window_days']} days "
+                  f"(every {m['backup_interval_hours']} h, {m['backup_interval_source']}); "
+                  f"{m['backup_runs_success']} succeeded, {m['backup_runs_failed']} failed")
+    else:
+        ev.append(f"No backup schedule known; {m['backup_runs_success']} successful and "
+                  f"{m['backup_runs_failed']} failed runs logged in {CFG['window_days']} days")
     if m.get("backup_last_success"):
         ev.append(f"Last successful backup {m['backup_last_success']} ({m['backup_last_success_age_hours']} h ago)")
     ev += capped([f"{iso(t)} FAILED {job}" for t, ok_, job in sorted(runs) if not ok_][-5:])
