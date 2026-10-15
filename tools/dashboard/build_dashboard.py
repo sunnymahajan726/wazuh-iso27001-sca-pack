@@ -1,7 +1,9 @@
-"""Create/overwrite the ISO 27001:2022 Evidence dashboard in Wazuh dashboard (OSD 2.x).
+"""Create/overwrite the ISO 27001:2022 Conformity Report dashboard in Wazuh dashboard (OSD 2.x).
 
-Usage: build_dashboard.py CRED_FILE
+Usage: build_dashboard.py CRED_FILE [--dry-run]
   CRED_FILE  file whose first line is admin:password for the Wazuh dashboard
+  --dry-run  build and validate the saved objects without contacting the API
+             (CRED_FILE is optional in this mode)
 Env: WAZUH_DASHBOARD_URL (default https://127.0.0.1)
 
 Re-running updates the existing objects (fixed ids). Run setup_state_index.py
@@ -9,9 +11,11 @@ and the state sync first so the wazuh-iso27001-state* panels have data.
 """
 import json, os, ssl, urllib.request, base64, sys
 
-if len(sys.argv) != 2:
+DRY = "--dry-run" in sys.argv
+args = [a for a in sys.argv[1:] if a != "--dry-run"]
+if len(args) != (0 if DRY else 1) and not (DRY and len(args) <= 1):
     sys.exit(__doc__)
-CRED = open(sys.argv[1]).readline().strip()
+CRED = open(args[0]).readline().strip() if args else ""
 BASE = os.environ.get("WAZUH_DASHBOARD_URL", "https://127.0.0.1").rstrip("/")
 IP = "wazuh-alerts-*"
 VER = "2.19.6"
@@ -100,14 +104,49 @@ def xy(chart, horizontal=False, mode="normal", ytitle="Count"):
 
 COUNT = {"id": "1", "enabled": True, "type": "count", "schema": "metric", "params": {}}
 
-INTRO = """### ISO/IEC 27001:2022 technical evidence
-Results from the **wazuh-iso27001-sca-pack** (Linux and Windows), mapped to Annex A controls.
+# --- Executive KPI tiles --------------------------------------------------
+# Score bands mirror the rating thresholds; high score -> green (invert).
+SCORE_RANGES = [{"from": 0, "to": 40}, {"from": 40, "to": 70},
+                {"from": 70, "to": 90}, {"from": 90, "to": 100.1}]
+# "zero is good": 0 -> green, anything >0 -> red (no invert).
+ZERO_GOOD = [{"from": 0, "to": 0.5}, {"from": 0.5, "to": 1000000}]
 
-* **Control ratings** combine configuration *and* log evidence. A collector on each endpoint measures every control (e.g. A.8.13: backup schedule vs. backup runs and their success in the logs over 30 days); the manager scores the measurements against `controls.yml` together with the SCA checks. Ratings: Compliant ≥ 90, Largely compliant ≥ 70, Partially compliant ≥ 40, else Non-compliant.\n* **Why** lists every criterion behind a rating: measured value, required value, result and points. **Evidence collected** shows what the collector found.
 
-* **How each check is tested** shows what every check looks at, when it passes, and the exact rule Wazuh runs.\n* **Control changes** lists every result change per control (e.g. failed → passed) with its scan time; it follows the time picker.\n* **Current status** panels (failing checks, control status, failures by control) read `wazuh-iso27001-state`, which is refreshed from the Wazuh manager every 15 minutes and matches *Endpoint security → Configuration Assessment*. They ignore the time picker.
-* **Score** and **trend** panels read the alert history and follow the time picker.
-* SCA results are technical evidence, **not certification**. Governance controls are listed in `UNMAPPED-GOVERNANCE-CONTROLS.md`."""
+def metric(oid, title, agg, ranges=None, invert=True, subtext="", font=48, query="", ip=None):
+    m = {"percentageMode": False, "useRanges": bool(ranges), "colorSchema": "Green to Red",
+         "metricColorMode": "Background" if ranges else "None",
+         "colorsRange": ranges or [{"from": 0, "to": 100}], "labels": {"show": True},
+         "invertColors": invert,
+         "style": {"bgFill": "#000", "bgColor": False, "labelColor": False,
+                   "subText": subtext, "fontSize": font}}
+    return vis(oid, title, "metric", {"addTooltip": True, "addLegend": False, "type": "metric", "metric": m},
+               [agg], query=query, ip=ip)
+
+
+def agg(atype, field=None, label=None):
+    p = {"customLabel": label} if label else {}
+    if field:
+        p["field"] = field
+    return {"id": "1", "enabled": True, "type": atype, "schema": "metric", "params": p}
+
+
+def md(oid, title, text, font=13):
+    return vis(oid, title, "markdown",
+               {"markdown": text, "fontSize": font, "openLinksInNewTab": False}, [], query=None)
+
+
+INTRO = """**Technical assessment of Annex A controls from live configuration and 30-day log evidence.**
+
+| | |
+|---|---|
+| **Standard** | ISO/IEC 27001:2022, Annex A |
+| **Scope** | Endpoints enrolled in Wazuh (Windows & Linux) |
+| **Basis** | Configuration + log evidence scored against `controls.yml`, combined with Wazuh SCA checks |
+| **Rating bands** | Compliant ≥ 90 · Largely compliant ≥ 70 · Partially compliant ≥ 40 · Non-compliant < 40 |
+| **Period** | Score, trend and change panels follow the time picker; status tiles reflect the latest sync |
+| **Source** | wazuh-iso27001-sca-pack |
+
+This report presents **technical evidence, not certification.** Governance controls that cannot be measured from an endpoint are listed in `UNMAPPED-GOVERNANCE-CONTROLS.md`."""
 
 objs = [
     {"type": "index-pattern", "id": HISTORY_IP,
@@ -155,8 +194,8 @@ objs = [
          terms("2", "agent.name", "bucket", label="Agent"),
          terms("3", "control", "bucket", size=60, label="Control")],
         query="", ip=CONTROLS_IP),
-    vis("iso27001-intro", "ISO 27001 - About", "markdown",
-        {"markdown": INTRO, "fontSize": 12, "openLinksInNewTab": False}, [], query=None),
+    vis("iso27001-intro", "ISO/IEC 27001:2022 Conformity Report", "markdown",
+        {"markdown": INTRO, "fontSize": 13, "openLinksInNewTab": False}, [], query=None),
     vis("iso27001-score-latest", "ISO 27001 - Latest score per agent", "table", TABLE,
         [latest("1", "data.sca.score", "Score %"),
          latest("4", "data.sca.passed", "Passed"),
@@ -221,31 +260,78 @@ objs = [
      "references": IDX_REF},
 ]
 
-# 48-column grid: (object id, type, x, y, w, h)
-layout = [("iso27001-intro", "visualization", 0, 0, 48, 10),
-          ("iso27001-rating-heatmap", "visualization", 0, 10, 48, 14),
-          ("iso27001-ratings", "visualization", 0, 24, 48, 22),
-          ("iso27001-criteria", "visualization", 0, 46, 48, 26),
-          ("iso27001-evidence-detail", "visualization", 0, 72, 48, 22),
-          ("iso27001-score-latest", "visualization", 0, 94, 20, 12),
-          ("iso27001-score-trend", "visualization", 20, 94, 28, 12),
-          ("iso27001-failing-now", "visualization", 0, 106, 48, 16),
-          ("iso27001-changes", "search", 0, 122, 48, 16),
-          ("iso27001-control-matrix", "visualization", 0, 138, 48, 24),
-          ("iso27001-check-basis", "visualization", 0, 162, 48, 24),
-          ("iso27001-fail-by-control", "visualization", 0, 186, 24, 16),
-          ("iso27001-pass-fail-trend", "visualization", 24, 186, 24, 16),
-          ("iso27001-events", "search", 0, 202, 48, 16)]
+# Executive-summary KPI tiles and section dividers (markdown panels act as
+# titled section bands; data panels get a clean display title via the layout).
+objs += [
+    md("iso27001-sec-exec", "Executive summary",
+       "Compliance posture across every assessed endpoint. Tiles are colour-coded against the rating "
+       "bands — **red needs attention**. The heatmap shows each control's score per endpoint."),
+    metric("iso27001-kpi-score", "ISO 27001 - Overall compliance score",
+           agg("avg", "score", "Overall compliance score"),
+           ranges=SCORE_RANGES, invert=True, subtext="avg control score / 100", ip=CONTROLS_IP),
+    metric("iso27001-kpi-endpoints", "ISO 27001 - Endpoints in scope",
+           agg("cardinality", "agent.name", "Endpoints in scope"), ip=CONTROLS_IP),
+    metric("iso27001-kpi-controls", "ISO 27001 - Annex A controls assessed",
+           agg("cardinality", "control", "Annex A controls assessed"), ip=CONTROLS_IP),
+    metric("iso27001-kpi-compliant", "ISO 27001 - Compliant results",
+           agg("count", None, "Compliant results"), ip=CONTROLS_IP, query='rating:"Compliant"'),
+    metric("iso27001-kpi-noncompliant", "ISO 27001 - Non-compliant results",
+           agg("count", None, "Non-compliant results"),
+           ranges=ZERO_GOOD, invert=False, ip=CONTROLS_IP, query='rating:"Non-compliant"'),
+    metric("iso27001-kpi-findings", "ISO 27001 - Open findings",
+           agg("count", None, "Open findings"),
+           ranges=ZERO_GOOD, invert=False, ip=STATE_IP, query="check.result:failed"),
+    md("iso27001-sec-ratings", "Control ratings register",
+       "Every Annex A control rated from configuration and log evidence. *What is missing* summarises "
+       "the gap; *Evidence* shows whether the data is current."),
+    md("iso27001-sec-findings", "Findings & nonconformities",
+       "Controls and individual checks that are currently failing, with the exact remediation — "
+       "the nonconformities to close first."),
+    md("iso27001-sec-evidence", "Evidence",
+       "The measured criteria behind each rating (measured value vs. requirement, with points) and the "
+       "raw evidence each collector gathered on the endpoint."),
+    md("iso27001-sec-method", "Methodology, scoring & change history",
+       "How each check is tested and the exact Wazuh rule, the SCA score per endpoint and its trend, "
+       "and every control result change over the selected period."),
+]
+
+# 48-column grid: (object id, type, x, y, w, h, display title | None for markdown)
+layout = [("iso27001-intro", "visualization", 0, 0, 48, 12, None),
+          ("iso27001-sec-exec", "visualization", 0, 12, 48, 4, None),
+          ("iso27001-kpi-score", "visualization", 0, 16, 8, 9, "Overall compliance score"),
+          ("iso27001-kpi-endpoints", "visualization", 8, 16, 8, 9, "Endpoints in scope"),
+          ("iso27001-kpi-controls", "visualization", 16, 16, 8, 9, "Annex A controls assessed"),
+          ("iso27001-kpi-compliant", "visualization", 24, 16, 8, 9, "Compliant results"),
+          ("iso27001-kpi-noncompliant", "visualization", 32, 16, 8, 9, "Non-compliant results"),
+          ("iso27001-kpi-findings", "visualization", 40, 16, 8, 9, "Open findings"),
+          ("iso27001-rating-heatmap", "visualization", 0, 25, 48, 14, "Control score by endpoint (0–100)"),
+          ("iso27001-sec-ratings", "visualization", 0, 39, 48, 4, None),
+          ("iso27001-ratings", "visualization", 0, 43, 48, 22, "Annex A control ratings"),
+          ("iso27001-sec-findings", "visualization", 0, 65, 48, 4, None),
+          ("iso27001-failing-now", "visualization", 0, 69, 48, 16, "Failing checks & remediation"),
+          ("iso27001-fail-by-control", "visualization", 0, 85, 48, 14, "Failing checks by control"),
+          ("iso27001-sec-evidence", "visualization", 0, 99, 48, 4, None),
+          ("iso27001-criteria", "visualization", 0, 103, 48, 26, "Rating criteria — measured vs. required"),
+          ("iso27001-evidence-detail", "visualization", 0, 129, 48, 22, "Evidence collected per control"),
+          ("iso27001-sec-method", "visualization", 0, 151, 48, 4, None),
+          ("iso27001-check-basis", "visualization", 0, 155, 48, 24, "How each check is tested"),
+          ("iso27001-control-matrix", "visualization", 0, 179, 48, 24, "Check status by endpoint"),
+          ("iso27001-score-latest", "visualization", 0, 203, 24, 12, "Latest SCA score per endpoint"),
+          ("iso27001-score-trend", "visualization", 24, 203, 24, 12, "SCA score over time"),
+          ("iso27001-pass-fail-trend", "visualization", 0, 215, 24, 16, "Pass / fail events over time"),
+          ("iso27001-changes", "search", 24, 215, 24, 16, "Control result changes"),
+          ("iso27001-events", "search", 0, 231, 48, 16, "Evidence events")]
 panels, refs = [], []
-for n, (oid, otype, x, y, w, h) in enumerate(layout):
+for n, (oid, otype, x, y, w, h, dt) in enumerate(layout):
     pid = str(n + 1)
+    ec = {"title": dt} if dt else {}
     panels.append({"version": VER, "gridData": {"x": x, "y": y, "w": w, "h": h, "i": pid},
-                   "panelIndex": pid, "embeddableConfig": {}, "panelRefName": f"panel_{n}"})
+                   "panelIndex": pid, "embeddableConfig": ec, "panelRefName": f"panel_{n}"})
     refs.append({"name": f"panel_{n}", "type": otype, "id": oid})
 
 objs.append({"type": "dashboard", "id": "iso27001-evidence",
-             "attributes": {"title": "ISO 27001:2022 Evidence",
-                            "description": "ISO/IEC 27001:2022 Annex A control ratings from configuration and log evidence, plus Wazuh SCA results",
+             "attributes": {"title": "ISO/IEC 27001:2022 Conformity Report",
+                            "description": "ISO/IEC 27001:2022 Annex A conformity report: executive summary, control ratings, findings and evidence from configuration and log evidence, plus Wazuh SCA results",
                             "panelsJSON": json.dumps(panels),
                             "optionsJSON": json.dumps({"hidePanelTitles": False, "useMargins": True}),
                             "version": 1, "timeRestore": True, "timeFrom": "now-30d", "timeTo": "now",
@@ -253,6 +339,19 @@ objs.append({"type": "dashboard", "id": "iso27001-evidence",
                             "kibanaSavedObjectMeta": {"searchSourceJSON": json.dumps(
                                 {"query": {"query": "", "language": "kuery"}, "filter": []})}},
              "references": refs})
+
+if DRY:
+    # Validate that every object serialises and report the plan; no API calls.
+    payload = json.dumps(objs)
+    kinds = {}
+    for o in objs:
+        kinds[o["type"]] = kinds.get(o["type"], 0) + 1
+    print(f"dry-run OK: {len(objs)} saved objects ({payload.__len__()} bytes), "
+          + ", ".join(f"{k}={v}" for k, v in sorted(kinds.items())))
+    print(f"dashboard panels: {len(panels)}")
+    for o in objs:
+        print(" ", o["type"], o["id"])
+    sys.exit(0)
 
 # Store the state index's field list so its panels can aggregate immediately.
 for o in objs[:4]:
